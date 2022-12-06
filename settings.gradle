@@ -2,3 +2,4 @@ rootProject.name = 'university-microservices'
 
 includeBuild 'spring-config'
 includeBuild 'eureka-server'
+includeBuild 'university-gateway'
