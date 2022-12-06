@@ -6,20 +6,19 @@ plugins {
 
 group = 'ru.university'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
+
 }
 
 ext {
-    set('springCloudVersion', "2022.0.0-RC2")
+    set('springCloudVersion', "2021.0.5")
 }
 
 dependencies {
     implementation 'org.springframework.cloud:spring-cloud-config-server'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
@@ -28,6 +27,3 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
