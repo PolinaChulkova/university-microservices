@@ -22,6 +22,16 @@
                   <project path="$PROJECT_DIR$/university-gateway" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/university-entity" name="university-entity">
+                <projects>
+                  <project path="$PROJECT_DIR$/university-entity" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/university-student" name="university-student">
+                <projects>
+                  <project path="$PROJECT_DIR$/university-student" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -34,7 +44,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/eureka-server" />
             <option value="$PROJECT_DIR$/spring-config" />
+            <option value="$PROJECT_DIR$/university-entity" />
             <option value="$PROJECT_DIR$/university-gateway" />
+            <option value="$PROJECT_DIR$/university-student" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -71,6 +83,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/university-gateway" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/university-student" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/university-student" />
           </set>
         </option>
       </GradleProjectSettings>
