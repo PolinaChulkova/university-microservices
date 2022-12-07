@@ -1,4 +1,4 @@
-package ru.university.universitystudent.controller;
+package ru.university.universityteacher.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.dto.SubjectDTO;
-import ru.university.studentuniversity.service.SubjectService;
+import ru.university.universityteacher.dto.MessageResponse;
+import ru.university.universityteacher.dto.SubjectDTO;
+import ru.university.universityteacher.service.SubjectService;
 
 @RestController
 @RequestMapping("/subject")

@@ -3,10 +3,10 @@ package ru.university.universitystudent.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.university.model.universityentity.entity.Rating;
-import ru.university.studentuniversity.dto.CreateRatingDTO;
-import ru.university.studentuniversity.dto.UpdateRatingDTO;
-import ru.university.studentuniversity.repo.RatingRepo;
+import ru.university.universityentity.model.Rating;
+import ru.university.universitystudent.dto.CreateRatingDTO;
+import ru.university.universitystudent.dto.UpdateRatingDTO;
+import ru.university.universitystudent.repo.RatingRepo;
 
 import java.util.List;
 
@@ -16,13 +16,12 @@ import java.util.List;
 public class RatingService {
 
     private final RatingRepo ratingRepo;
-    private final TaskService taskService;
     private final StudentService studentService;
 
     public Rating createRating(CreateRatingDTO dto) {
-        if (taskService.findTaskByIdForTeacher(dto.getTaskId(), dto.getTeacherId()) == null)
-            throw new RuntimeException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
-                    + ", т.к. он закреплен за другим преподавателем");
+//        if (taskService.findTaskByIdForTeacher(dto.getTaskId(), dto.getTeacherId()) == null)
+//            throw new RuntimeException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
+//                    + ", т.к. он закреплен за другим преподавателем");
 
         Rating rating = new Rating(
                 dto.getMark(),

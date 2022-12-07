@@ -2,9 +2,9 @@ package ru.university.universitystudent.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.university.entity.Student;
-import ru.university.studentuniversity.dto.StudentDTO;
-import ru.university.studentuniversity.repo.StudentRepo;
+import ru.university.universityentity.model.Student;
+import ru.university.universitystudent.dto.StudentDTO;
+import ru.university.universitystudent.repo.StudentRepo;
 
 @Service
 @RequiredArgsConstructor

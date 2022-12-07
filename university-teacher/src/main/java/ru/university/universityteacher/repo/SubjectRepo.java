@@ -1,4 +1,4 @@
-package ru.university.universitystudent.repo;
+package ru.university.universityteacher.repo;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.university.entity.Subject;
+import ru.university.universityentity.model.Subject;
 
 import java.util.Optional;
 

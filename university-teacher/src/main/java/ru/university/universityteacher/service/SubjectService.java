@@ -1,14 +1,13 @@
-package ru.university.universitystudent.service;
+package ru.university.universityteacher.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.university.entity.Group;
-import ru.university.entity.Subject;
-import ru.university.studentuniversity.dto.SubjectDTO;
-import ru.university.studentuniversity.repo.SubjectRepo;
+import ru.university.universityentity.model.Subject;
+import ru.university.universityteacher.dto.SubjectDTO;
+import ru.university.universityteacher.repo.SubjectRepo;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +16,6 @@ public class SubjectService {
 
     private final SubjectRepo subjectRepo;
     private final TeacherService teacherService;
-    private final GroupService groupService;
 
     public Page<Subject> searchTeacherSubject(Long teacherId, String key, Pageable pageable) {
             return subjectRepo.findTeacherSubject(teacherId, key, pageable);
@@ -42,10 +40,7 @@ public class SubjectService {
 
     public void addGroupToSubject(Long groupId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
-        Group group = groupService.findGroupById(groupId);
         subject.getGroupsId().add(groupId);
-        group.getSubjectsId().add(subjectId);
-        groupService.save(group);
         subjectRepo.save(subject);
     }
 
@@ -64,10 +59,7 @@ public class SubjectService {
 
     public void detachGroupFromSubject(Long groupId, Long subjectId) {
             Subject subject = findSubjectById(subjectId);
-            Group group = groupService.findGroupById(groupId);
             subject.getGroupsId().remove(groupId);
-            group.getSubjectsId().remove(subjectId);
-            groupService.save(group);
             subjectRepo.save(subject);
     }
 

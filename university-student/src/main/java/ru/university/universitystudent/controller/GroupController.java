@@ -1,18 +1,19 @@
 package ru.university.universitystudent.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.studentuniversity.dto.CreateGroupDTO;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.service.GroupService;
+import ru.university.universitystudent.dto.CreateGroupDTO;
+import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.service.GroupService;
 
 @RestController
 @RequestMapping("/group")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class GroupController {
 
@@ -23,16 +24,16 @@ public class GroupController {
         return ResponseEntity.ok().body(groupService.findGroupById(groupId));
     }
 
-    @GetMapping("/groups/{teacherId}")
-    public ResponseEntity<?> findTeacherGroups(
-            @PathVariable Long teacherId,
-            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok().body(groupService.findTeacherGroups(teacherId, pageable)
-                .getContent());
-    }
+//    @GetMapping("/groups/{teacherId}")
+//    public ResponseEntity<?> findTeacherGroups(
+//            @PathVariable Long teacherId,
+//            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+//            @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//        return ResponseEntity.ok().body(groupService.findTeacherGroups(teacherId, pageable)
+//                .getContent());
+//    }
 
     @GetMapping("/students/{groupId}")
     public ResponseEntity<?> getStudentsByGroup(@PathVariable Long groupId) {

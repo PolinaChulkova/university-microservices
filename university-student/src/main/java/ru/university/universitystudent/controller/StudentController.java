@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.dto.StudentDTO;
-import ru.university.studentuniversity.service.StudentService;
+import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.dto.StudentDTO;
+import ru.university.universitystudent.service.StudentService;
 
 @RestController
 @RequestMapping("/student")

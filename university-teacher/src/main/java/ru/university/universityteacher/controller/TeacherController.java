@@ -1,12 +1,12 @@
-package ru.university.universitystudent.controller;
+package ru.university.universityteacher.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.dto.TeacherDTO;
-import ru.university.studentuniversity.service.TeacherService;
+import ru.university.universityteacher.dto.MessageResponse;
+import ru.university.universityteacher.dto.TeacherDTO;
+import ru.university.universityteacher.service.TeacherService;
 
 @RestController
 @RequestMapping("/teacher")

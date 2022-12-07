@@ -1,6 +1,5 @@
 package ru.university.universityentity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "task")
+@Table(name = "task", schema = "teachers", catalog = "university-teachers")
 @Getter@Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,7 +34,8 @@ public class Task {
     private Long groupId;
 
     @ElementCollection
-    @CollectionTable(name = "tasks_files", joinColumns = @JoinColumn(name = "task_id"))
+    @CollectionTable(name = "tasks_files", joinColumns = @JoinColumn(name = "task_id"),
+            schema = "teachers", catalog = "university-teachers")
     @Column(name = "file_uri")
     private Set<String> filesUri = new HashSet<>();
 
@@ -44,9 +44,11 @@ public class Task {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
-    private Set<TaskAnswer> taskAnswers = new HashSet<>();
+    @ElementCollection
+    @CollectionTable(name = "task_task_answers", joinColumns = @JoinColumn(name = "task_id"),
+            schema = "teachers", catalog = "university-teachers")
+    @Column(name = "task_answers_id")
+    private Set<Long> taskAnswers = new HashSet<>();
 
     public Task(String name, String description, Date startLine, Date deadLine,
                 Long groupId, Teacher teacher) {

@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.university.entity.TaskAnswer;
-import ru.university.studentuniversity.dto.CreateTaskAnswerDTO;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.service.TaskAnswerService;
+import ru.university.universityentity.model.TaskAnswer;
+import ru.university.universitystudent.dto.CreateTaskAnswerDTO;
+import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.service.TaskAnswerService;
 
 @RestController
 @RequestMapping("/task-answer")
@@ -25,11 +25,11 @@ public class TaskAnswerController {
         return ResponseEntity.ok().body(taskAnswerService.getTaskAnswerForStudent(taskId, studentId));
     }
 
-    @GetMapping("/for-teacher/{teacherId}/{taskId}")
-    public ResponseEntity<?> getTaskAnswersForTeacher(@PathVariable Long teacherId,
-                                                      @PathVariable Long taskId) {
-        return ResponseEntity.ok().body(taskAnswerService.getTaskAnswersForTeacher(taskId, teacherId));
-    }
+//    @GetMapping("/for-teacher/{teacherId}/{taskId}")
+//    public ResponseEntity<?> getTaskAnswersForTeacher(@PathVariable Long teacherId,
+//                                                      @PathVariable Long taskId) {
+//        return ResponseEntity.ok().body(taskAnswerService.getTaskAnswersForTeacher(taskId, teacherId));
+//    }
 
     @PostMapping("/send")
     private ResponseEntity<?> sendTaskAnswer(@RequestBody CreateTaskAnswerDTO dto) {

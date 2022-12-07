@@ -32,6 +32,11 @@
                   <project path="$PROJECT_DIR$/university-student" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/university-teacher" name="university-teacher">
+                <projects>
+                  <project path="$PROJECT_DIR$/university-teacher" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -47,6 +52,7 @@
             <option value="$PROJECT_DIR$/university-entity" />
             <option value="$PROJECT_DIR$/university-gateway" />
             <option value="$PROJECT_DIR$/university-student" />
+            <option value="$PROJECT_DIR$/university-teacher" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -92,6 +98,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/university-student" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/university-teacher" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/university-teacher" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -2,7 +2,7 @@ package ru.university.universitystudent.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.university.entity.TaskAnswer;
+import ru.university.universityentity.model.TaskAnswer;
 
 import java.util.List;
 import java.util.Optional;

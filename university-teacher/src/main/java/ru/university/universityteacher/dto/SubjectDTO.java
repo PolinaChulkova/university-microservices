@@ -1,4 +1,4 @@
-package ru.university.universitystudent.dto;
+package ru.university.universityteacher.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

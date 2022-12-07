@@ -1,11 +1,11 @@
-package ru.university.universitystudent.service;
+package ru.university.universityteacher.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.university.entity.Teacher;
-import ru.university.studentuniversity.dto.TeacherDTO;
-import ru.university.studentuniversity.repo.TeacherRepo;
+import ru.university.universityentity.model.Teacher;
+import ru.university.universityteacher.dto.TeacherDTO;
+import ru.university.universityteacher.repo.TeacherRepo;
 
 @Service
 @RequiredArgsConstructor

@@ -1,37 +1,33 @@
 package ru.university.universitystudent.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.university.model.*;
-import ru.university.studentuniversity.dto.CreateGroupDTO;
-import ru.university.studentuniversity.repo.GroupRepo;
+import ru.university.universityentity.model.Group;
+import ru.university.universitystudent.dto.CreateGroupDTO;
+import ru.university.universitystudent.repo.GroupRepo;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class GroupService {
 
     private final GroupRepo groupRepo;
     private final StudentService studentService;
-    private final TeacherService teacherService;
 
     public Page<Group> findAllGroups(Pageable pageable) {
         return groupRepo.findAll(pageable);
     }
 
-    public Page<Group> findTeacherGroups(Long teacherId, Pageable pageable) {
-        List<Group> groups = teacherService.findTeacherById(teacherId)
-                .getGroupsId().stream().map(this::findGroupById).collect(Collectors.toList());
-
-        return new PageImpl<Group>(groups, pageable, groups.size());
-    }
+//    public Page<Group> findTeacherGroups(Long teacherId, Pageable pageable) {
+//        List<Group> groups = teacherService.findTeacherById(teacherId)
+//                .getGroupsId().stream().map(this::findGroupById).collect(Collectors.toList());
+//
+//        return new PageImpl<>(groups, pageable, groups.size());
+//    }
 
     public void createGroup(CreateGroupDTO dto) {
         Group group = new Group();

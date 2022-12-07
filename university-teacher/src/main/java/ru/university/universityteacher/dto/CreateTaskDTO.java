@@ -1,4 +1,4 @@
-package ru.university.universitystudent.dto;
+package ru.university.universityteacher.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,11 +8,12 @@ import java.util.Date;
 
 @AllArgsConstructor
 @Getter@Setter
-public class UpdateTaskDTO {
+public class CreateTaskDTO {
     private String name;
     private String description;
+    private Date startLine;
     private Date deadLine;
-//    потом буду получать из principal
+    //    после созании Security преподаватель будет получаться из Principal
     private Long teacherId;
+    private Long groupId;
 }
-

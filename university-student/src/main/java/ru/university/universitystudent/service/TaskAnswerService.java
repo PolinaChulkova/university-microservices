@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.university.entity.TaskAnswer;
-import ru.university.studentuniversity.dto.CreateTaskAnswerDTO;
-import ru.university.studentuniversity.repo.TaskAnswerRepo;
+import ru.university.universityentity.model.TaskAnswer;
+import ru.university.universitystudent.dto.CreateTaskAnswerDTO;
+import ru.university.universitystudent.repo.TaskAnswerRepo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TaskAnswerService {
 
-    private final TaskService taskService;
     private final TaskAnswerRepo taskAnswerRepo;
     private final StudentService studentService;
     private final FileService fileService;
@@ -27,20 +26,20 @@ public class TaskAnswerService {
                 new RuntimeException("Ваш ответ не найден"));
     }
 
-    public List<TaskAnswer> getTaskAnswersForTeacher(Long taskId, Long teacherId) {
-        return taskAnswerRepo.findTaskAnswersByTaskId(taskService
-                .findTaskByIdForTeacher(taskId, teacherId).getId());
-    }
+//    public List<TaskAnswer> getTaskAnswersForTeacher(Long taskId, Long teacherId) {
+//        return taskAnswerRepo.findTaskAnswersByTaskId(taskService
+//                .findTaskByIdForTeacher(taskId, teacherId).getId());
+//    }
 
     public TaskAnswer sendTaskAnswer(CreateTaskAnswerDTO dto) {
-        if (taskService.findTaskByIdForStudent(dto.getTaskId(), dto.getStudentId()) == null) {
-            throw new RuntimeException("Нельзя отправить ответ на это задание");
-        }
+//        if (taskService.findTaskByIdForStudent(dto.getTaskId(), dto.getStudentId()) == null) {
+//            throw new RuntimeException("Нельзя отправить ответ на это задание");
+//        }
 
         TaskAnswer answer = new TaskAnswer(
                 dto.getComment(),
-                studentService.findStudentById(dto.getStudentId()),
-                dto.getTaskId()
+                dto.getTaskId(),
+                studentService.findStudentById(dto.getStudentId())
         );
 
         taskAnswerRepo.save(answer);

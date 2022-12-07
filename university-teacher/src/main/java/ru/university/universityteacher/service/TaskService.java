@@ -1,4 +1,4 @@
-package ru.university.universitystudent.service;
+package ru.university.universityteacher.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.university.entity.Group;
-import ru.university.entity.Task;
-import ru.university.entity.Teacher;
-import ru.university.studentuniversity.dto.CreateTaskDTO;
-import ru.university.studentuniversity.dto.UpdateTaskDTO;
-import ru.university.studentuniversity.repo.TaskRepo;
+import ru.university.universityentity.model.Group;
+import ru.university.universityentity.model.Task;
+import ru.university.universityentity.model.Teacher;
+import ru.university.universityteacher.dto.CreateTaskDTO;
+import ru.university.universityteacher.dto.UpdateTaskDTO;
+import ru.university.universityteacher.repo.TaskRepo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +23,8 @@ import java.util.stream.Collectors;
 public class TaskService {
 
     private final TaskRepo taskRepo;
-    private final GroupService groupService;
     private final FileService fileService;
     private final TeacherService teacherService;
-    private final StudentService studentService;
 
     public Task createTask(CreateTaskDTO dto) {
         Teacher teacher = teacherService.findTeacherById(dto.getTeacherId());
@@ -43,10 +41,7 @@ public class TaskService {
                     teacher
             );
             taskRepo.save(task);
-            Group group = groupService.findGroupById(dto.getGroupId());
-            group.getTasksId().add(task.getId());
-            groupService.save(group);
-
+//            Здесь нужно отправить задание группе и сохранить ее
             return task;
     }
 
@@ -77,15 +72,15 @@ public class TaskService {
             taskRepo.save(task);
     }
 
-    public List<Task> findAllTasksBySubjectForStudent(Long subjectId, Long studentId) {
-        return taskRepo.findBySubjectIdAndGroupId(subjectId,
-                studentService.findStudentById(studentId).getGroup().getId());
-    }
+//    public List<Task> findAllTasksBySubjectForStudent(Long subjectId, Long studentId) {
+//        return taskRepo.findBySubjectIdAndGroupId(subjectId,
+//                studentService.findStudentById(studentId).getGroup().getId());
+//    }
 
-    public Task findTaskByIdForStudent(Long taskId, Long studentId) {
-        List<Long> tasksId= studentService.findStudentById(studentId).getGroup().getTasksId();
-        return findTaskById(tasksId.get(tasksId.indexOf(taskId)));
-    }
+//    public Task findTaskByIdForStudent(Long taskId, Long studentId) {
+//        List<Long> tasksId= studentService.findStudentById(studentId).getGroup().getTasksId();
+//        return findTaskById(tasksId.get(tasksId.indexOf(taskId)));
+//    }
 
     public Task findTaskByIdForTeacher(Long taskId, Long teacherId) {
         return taskRepo.findByIdAndTeacher_Id(taskId, teacherId).orElseThrow(()

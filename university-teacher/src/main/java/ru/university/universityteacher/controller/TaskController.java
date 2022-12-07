@@ -1,4 +1,4 @@
-package ru.university.universitystudent.controller;
+package ru.university.universityteacher.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.university.entity.Task;
-import ru.university.studentuniversity.dto.CreateTaskDTO;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.dto.UpdateTaskDTO;
-import ru.university.studentuniversity.service.TaskService;
+import ru.university.universityentity.model.Task;
+import ru.university.universityteacher.dto.CreateTaskDTO;
+import ru.university.universityteacher.dto.MessageResponse;
+import ru.university.universityteacher.dto.UpdateTaskDTO;
+import ru.university.universityteacher.service.TaskService;
 
 @RestController
 @RequestMapping("/task")
@@ -22,17 +22,17 @@ public class TaskController {
     private final TaskService taskService;
 //    private final AmqpTemplate template;
 
-    @GetMapping("/student/{studentId}/{taskId}")
-    public ResponseEntity<?> getStudentTask(@PathVariable Long studentId,
-                                            @PathVariable Long taskId) {
-        return ResponseEntity.ok().body(taskService.findTaskByIdForStudent(taskId, studentId));
-    }
+//    @GetMapping("/student/{studentId}/{taskId}")
+//    public ResponseEntity<?> getStudentTask(@PathVariable Long studentId,
+//                                            @PathVariable Long taskId) {
+//        return ResponseEntity.ok().body(taskService.findTaskByIdForStudent(taskId, studentId));
+//    }
 
-    @GetMapping("/subject/{subjectId}/{studentId}")
-    public ResponseEntity<?> getAllTaskBySubjectForStudent(@PathVariable Long subjectId,
-                                                           @PathVariable Long studentId) {
-        return ResponseEntity.ok().body(taskService.findAllTasksBySubjectForStudent(subjectId, studentId));
-    }
+//    @GetMapping("/subject/{subjectId}/{studentId}")
+//    public ResponseEntity<?> getAllTaskBySubjectForStudent(@PathVariable Long subjectId,
+//                                                           @PathVariable Long studentId) {
+//        return ResponseEntity.ok().body(taskService.findAllTasksBySubjectForStudent(subjectId, studentId));
+//    }
 
     @GetMapping("/teacher/{taskId}/{teacherId}")
     public ResponseEntity<?> getTeacherTask(@PathVariable Long taskId,

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "teacher")
+@Table(name = "teacher", schema = "teachers", catalog = "university-teachers")
 @Getter@Setter
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -38,11 +38,13 @@ public class Teacher {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id"))
+            inverseJoinColumns = @JoinColumn(name = "subject_id"),
+            schema = "teachers", catalog = "university-teachers")
     private List<Subject> subjects;
 
     @ElementCollection
-    @CollectionTable(name = "teacher_groups", joinColumns = @JoinColumn(name = "teacher_id"))
+    @CollectionTable(name = "teacher_groups", joinColumns = @JoinColumn(name = "teacher_id"),
+            schema = "teachers", catalog = "university-teachers")
     @Column(name = "groups_id")
     private List<Long> groupsId = new ArrayList<>();
 

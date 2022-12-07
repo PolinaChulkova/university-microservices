@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "task_answer")
+@Table(name = "task_answer", schema = "students", catalog = "university-students")
 @Getter@Setter
 @NoArgsConstructor
 public class TaskAnswer {
@@ -26,7 +26,8 @@ public class TaskAnswer {
     private Long taskId;
 
     @ElementCollection
-    @CollectionTable(name = "answers_files", joinColumns = @JoinColumn(name = "task_answer_id"))
+    @CollectionTable(name = "answers_files", joinColumns = @JoinColumn(name = "task_answer_id"),
+            schema = "students", catalog = "university-students")
     @Column(name = "file_uri")
     private Set<String> filesUri;
 
@@ -34,9 +35,8 @@ public class TaskAnswer {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    public TaskAnswer(String comment, Date date, Long taskId, Student student) {
+    public TaskAnswer(String comment, Long taskId, Student student) {
         this.comment = comment;
-        this.date = date;
         this.taskId = taskId;
         this.student = student;
     }

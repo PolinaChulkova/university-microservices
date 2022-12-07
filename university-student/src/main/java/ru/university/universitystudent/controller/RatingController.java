@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.entity.Rating;
-import ru.university.studentuniversity.dto.CreateRatingDTO;
-import ru.university.studentuniversity.dto.MessageResponse;
-import ru.university.studentuniversity.dto.UpdateRatingDTO;
-import ru.university.studentuniversity.service.RatingService;
+import ru.university.universityentity.model.Rating;
+import ru.university.universitystudent.dto.CreateRatingDTO;
+import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.dto.UpdateRatingDTO;
+import ru.university.universitystudent.service.RatingService;
 
 @RestController
 @RequestMapping("/rating")
