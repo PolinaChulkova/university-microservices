@@ -1,6 +1,5 @@
 package ru.university.universityentity.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,6 @@ public class Task {
     @Column(name = "file_uri")
     private Set<String> filesUri = new HashSet<>();
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;

@@ -6,9 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Subject;
+import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.SubjectDTO;
 import ru.university.universityteacher.repo.SubjectRepo;
 
+import javax.transaction.Transactional;
+
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,25 +33,24 @@ public class SubjectService {
         return subjectRepo.findAllByGroupsIdIsContaining(groupId, pageable);
     }
 
-    public void createSubject(SubjectDTO dto) {
-            Subject subject = new Subject();
-            subject.setSubjectName(dto.getSubjectName());
-            dto.getTeachersId().forEach(id ->
-                    subject.getTeachers().add(teacherService.findTeacherById(id)));
-
+    public Subject createSubject(SubjectDTO dto) {
+            Subject subject = new Subject(dto.getSubjectName());
             subjectRepo.save(subject);
+            return subject;
     }
 
-    public void addGroupToSubject(Long groupId, Long subjectId) {
-        Subject subject = findSubjectById(subjectId);
-        subject.getGroupsId().add(groupId);
-        subjectRepo.save(subject);
-    }
+//    public void addGroupToSubject(Long groupId, Long subjectId) {
+//        Subject subject = findSubjectById(subjectId);
+//        subject.getGroupsId().add(groupId);
+//        subjectRepo.save(subject);
+//    }
 
-    public void addTeacherToSubject(Long teacherId, Long subjectId) {
+    public void addTeacherAndGroupToSubject(Long teacherId, Long groupId, Long subjectId) {
             Subject subject = findSubjectById(subjectId);
-            subject.getTeachers().add(teacherService.findTeacherById(teacherId));
-
+            Teacher teacher = teacherService.findTeacherById(teacherId);
+            subject.getTeachers().add(teacher);
+            teacher.getGroupsId().add(groupId);
+            subject.getGroupsId().add(groupId);
             subjectRepo.save(subject);
     }
 

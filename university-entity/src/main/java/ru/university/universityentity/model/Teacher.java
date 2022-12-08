@@ -1,12 +1,11 @@
 package ru.university.universityentity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "teacher", schema = "teachers", catalog = "university-teachers")
@@ -30,23 +29,23 @@ public class Teacher {
     @Column(name = "academic_degree")
     private String academicDegree;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private List<Task> tasks;
 
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"),
             schema = "teachers", catalog = "university-teachers")
-    private List<Subject> subjects;
+    private Set<Subject> subjects;
 
     @ElementCollection
     @CollectionTable(name = "teacher_groups", joinColumns = @JoinColumn(name = "teacher_id"),
             schema = "teachers", catalog = "university-teachers")
     @Column(name = "groups_id")
-    private List<Long> groupsId = new ArrayList<>();
+    private Set<Long> groupsId;
 
     public Teacher(String fullName, String email, String password,
                    String phoneNum, String academicDegree) {

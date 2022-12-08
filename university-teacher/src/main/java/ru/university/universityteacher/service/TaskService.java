@@ -13,10 +13,11 @@ import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.repo.TaskRepo;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -58,7 +59,7 @@ public class TaskService {
         taskRepo.save(task);
     }
 
-    public void updateTask(Long taskId, UpdateTaskDTO dto) {
+    public Task updateTask(Long taskId, UpdateTaskDTO dto) {
             Task task = findTaskById(taskId);
 
             if (!task.getTeacher().equals(teacherService.findTeacherById(dto.getTeacherId())))
@@ -70,6 +71,7 @@ public class TaskService {
             task.setDeadLine(dto.getDeadLine());
 
             taskRepo.save(task);
+            return task;
     }
 
 //    public List<Task> findAllTasksBySubjectForStudent(Long subjectId, Long studentId) {

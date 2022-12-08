@@ -1,12 +1,11 @@
 package ru.university.universityentity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "subject", schema = "teachers", catalog = "university-teachers")
@@ -25,13 +24,17 @@ public class Subject {
     @ElementCollection
     @CollectionTable(name = "subject_groups", joinColumns = @JoinColumn(name = "subject_id"),
             schema = "teachers", catalog = "university-teachers")
-    private List<Long> groupsId = new ArrayList<>();
+    private Set<Long> groupsId = new HashSet<>();
 
-    @JsonBackReference
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "subject_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id"),
             schema = "teachers", catalog = "university-teachers")
-    private Collection<Teacher> teachers = new ArrayList<>();
+    private Set<Teacher> teachers = new HashSet<>();
+
+    public Subject(String subjectName) {
+        this.subjectName = subjectName;
+    }
 }

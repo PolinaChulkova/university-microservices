@@ -60,9 +60,7 @@ public class SubjectController {
     @PostMapping("/create")
     public ResponseEntity<?> createSubject(@RequestBody SubjectDTO dto) {
         try {
-            subjectService.createSubject(dto);
-            return ResponseEntity.ok().body(new MessageResponse("Создан предмет: \""
-                    + dto.getSubjectName() + "\""));
+            return ResponseEntity.ok().body(subjectService.createSubject(dto));
 
         } catch (RuntimeException e) {
             log.error("Предмет с названием " + dto.getSubjectName() + " не создан. Error: "
@@ -74,11 +72,12 @@ public class SubjectController {
     }
 
     //    для админа
-    @PostMapping("/add-teacher/{subjectId}/{teacherId}")
-    public ResponseEntity<?> addTeacherToSubject(@PathVariable Long subjectId,
-                                                 @PathVariable Long teacherId) {
+    @PostMapping("/add-teacher-group")
+    public ResponseEntity<?> addTeacherAndGroupToSubject(@RequestParam("teacherId") Long teacherId,
+                                                         @RequestParam("groupId") Long groupId,
+                                                         @RequestParam("subjectId") Long subjectId) {
         try {
-            subjectService.addTeacherToSubject(teacherId, subjectId);
+            subjectService.addTeacherAndGroupToSubject(teacherId, groupId, subjectId);
             return ResponseEntity.ok().body(new MessageResponse("Преподаватель с id=" + teacherId
                     + " добавлен к предмету с id=" + subjectId));
 
@@ -92,23 +91,23 @@ public class SubjectController {
         }
     }
 
-    //    для админа
-    @PostMapping("/add-group/{subjectId}/{groupId}")
-    public ResponseEntity<?> addGroupToSubject(@PathVariable Long subjectId,
-                                               @PathVariable Long groupId) {
-        try {
-            subjectService.addGroupToSubject(groupId, subjectId);
-            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
-                    " добавлена группа с id=" + groupId));
-
-        } catch (RuntimeException e) {
-            log.error("Не удалось добавить группу к предмету. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
-                    + e.getLocalizedMessage()));
-        }
-    }
+//    //    для админа
+//    @PostMapping("/add-group/{subjectId}/{groupId}")
+//    public ResponseEntity<?> addGroupToSubject(@PathVariable Long subjectId,
+//                                               @PathVariable Long groupId) {
+//        try {
+//            subjectService.addGroupToSubject(groupId, subjectId);
+//            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
+//                    " добавлена группа с id=" + groupId));
+//
+//        } catch (RuntimeException e) {
+//            log.error("Не удалось добавить группу к предмету. Error: "
+//                    + e.getLocalizedMessage());
+//
+//            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
+//                    + e.getLocalizedMessage()));
+//        }
+//    }
 
     //    для админа
     @PostMapping("/detach-teacher/{subjectId}/{teacherId}")

@@ -100,8 +100,7 @@ public class TaskController {
     public ResponseEntity<?> updateTeacherTask(@PathVariable Long taskId,
                                                @RequestBody UpdateTaskDTO dto) {
         try {
-            taskService.updateTask(taskId, dto);
-            return ResponseEntity.ok().body(new MessageResponse("Задание " + dto.getName() + " обновлено."));
+            return ResponseEntity.ok().body(taskService.updateTask(taskId, dto));
 
         } catch (RuntimeException e) {
             log.error("Задание " + dto.getName() + " не обновлёно. Error: "

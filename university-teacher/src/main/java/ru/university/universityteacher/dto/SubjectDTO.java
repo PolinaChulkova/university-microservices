@@ -10,5 +10,4 @@ import java.util.Collection;
 @Getter@Setter
 public class SubjectDTO {
     private String subjectName;
-    private Collection<Long> teachersId;
 }

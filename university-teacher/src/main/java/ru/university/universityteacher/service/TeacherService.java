@@ -7,6 +7,9 @@ import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.repo.TeacherRepo;
 
+import javax.transaction.Transactional;
+
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,31 +27,28 @@ public class TeacherService {
                 .orElseThrow(() -> new RuntimeException("Преподаватель с email: " + email + "не найден."));
     }
 
-    public void createTeacher(TeacherDTO dto) {
-            Teacher teacher = new Teacher(
-                    dto.getFullName(),
-                    dto.getEmail(),
-                    dto.getPassword(),
-                    dto.getPhoneNum(),
-                    dto.getAcademicDegree());
-            teacherRepo.save(teacher);
+    public Teacher createTeacher(TeacherDTO dto) {
+        Teacher teacher = new Teacher(
+                dto.getFullName(),
+                dto.getEmail(),
+                dto.getPassword(),
+                dto.getPhoneNum(),
+                dto.getAcademicDegree()
+        );
+        teacherRepo.save(teacher);
+        return teacher;
     }
 
-    public void updateTeacher(Long teacherId, TeacherDTO dto) {
-        try {
-            Teacher teacher = findTeacherById(teacherId);
-            teacher.setFullName(dto.getFullName());
-            teacher.setEmail(dto.getEmail());
-            teacher.setPassword(dto.getPassword());
-            teacher.setPhoneNum(dto.getPhoneNum());
-            teacher.setAcademicDegree(dto.getAcademicDegree());
+    public Teacher updateTeacher(Long teacherId, TeacherDTO dto) {
+        Teacher teacher = findTeacherById(teacherId);
+        teacher.setFullName(dto.getFullName());
+        teacher.setEmail(dto.getEmail());
+        teacher.setPassword(dto.getPassword());
+        teacher.setPhoneNum(dto.getPhoneNum());
+        teacher.setAcademicDegree(dto.getAcademicDegree());
 
-            teacherRepo.save(teacher);
-
-        } catch (RuntimeException e) {
-            log.error("Преподватель с Id= " + teacherId + " не обновлён. {}"
-                    + e.getLocalizedMessage());
-        }
+        teacherRepo.save(teacher);
+        return teacher;
     }
 
     public void deleteTeacherById(Long teacherId) {

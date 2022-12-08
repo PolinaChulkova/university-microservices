@@ -30,8 +30,7 @@ public class TeacherController {
     @PostMapping("/create")
     public ResponseEntity<?> createTeacher(@RequestBody TeacherDTO dto) {
         try {
-            teacherService.createTeacher(dto);
-            return ResponseEntity.ok().body(new MessageResponse("Создан преподаватель с email: " + dto.getEmail()));
+            return ResponseEntity.ok().body(teacherService.createTeacher(dto));
 
         } catch (RuntimeException e) {
             log.error("Преподаватель с email: " + dto.getEmail() + " не создан. Error: "
@@ -47,9 +46,7 @@ public class TeacherController {
     public ResponseEntity<?> updateTeacher(@PathVariable Long teacherId,
                                            @RequestBody TeacherDTO dto) {
         try {
-            teacherService.updateTeacher(teacherId, dto);
-            return ResponseEntity.ok().body(new MessageResponse("Обновлён преподаватель с email: "
-                    + dto.getEmail()));
+            return ResponseEntity.ok().body(teacherService.updateTeacher(teacherId, dto));
 
         } catch (RuntimeException e) {
             log.error("Преподватель с Id= " + teacherId + " не обновлён. {}"

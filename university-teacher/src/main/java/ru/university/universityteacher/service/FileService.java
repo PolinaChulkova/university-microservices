@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+@Transactional
 @Service
 @Slf4j
 public class FileService {
