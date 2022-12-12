@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Group;
-import ru.university.universitystudent.dto.CreateGroupDTO;
+import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
 
 
@@ -29,17 +29,23 @@ public class GroupService {
 //        return new PageImpl<>(groups, pageable, groups.size());
 //    }
 
-    public void createGroup(CreateGroupDTO dto) {
-        Group group = new Group();
-        group.setName(dto.getName());
-        dto.getStudentsId().forEach(id ->
-                group.getStudents().add(studentService.findStudentById(id)));
+    public Group createGroup(String groupName) {
+        Group group = new Group(groupName);
+//
+//        for (Student student : students) {
+//            student.setGroup(group);
+//            studentService.save(student);
+//        }
         groupRepo.save(group);
+        return group;
     }
 
     public void addStudentToGroup(Long groupId, Long studentId) {
         Group group = findGroupById(groupId);
-        group.getStudents().add(studentService.findStudentById(studentId));
+        Student student = studentService.findStudentById(studentId);
+        group.getStudents().add(student);
+        student.setGroup(group);
+        studentService.save(student);
         groupRepo.save(group);
     }
 

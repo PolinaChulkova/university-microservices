@@ -6,11 +6,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "student", schema = "students", catalog = "university-students")
-@Getter@Setter
-@EqualsAndHashCode
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student {
@@ -28,7 +29,8 @@ public class Student {
     private String phoneNum;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade =
+            {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "group_id")
     private Group group;
 
@@ -41,5 +43,31 @@ public class Student {
         this.email = email;
         this.password = password;
         this.phoneNum = phoneNum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student student = (Student) o;
+
+        if (!Objects.equals(id, student.id)) return false;
+        if (!Objects.equals(fullName, student.fullName)) return false;
+        if (!Objects.equals(email, student.email)) return false;
+        if (!Objects.equals(password, student.password)) return false;
+        if (!Objects.equals(phoneNum, student.phoneNum)) return false;
+        return Objects.equals(group, student.group);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (phoneNum != null ? phoneNum.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        return result;
     }
 }

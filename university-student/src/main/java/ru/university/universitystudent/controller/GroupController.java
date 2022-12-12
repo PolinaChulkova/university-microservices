@@ -1,10 +1,11 @@
 package ru.university.universitystudent.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.universitystudent.dto.CreateGroupDTO;
+import ru.university.universitystudent.dto.GroupDTO;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.service.GroupService;
 
@@ -39,13 +40,12 @@ public class GroupController {
 
     //    для админа
     @PostMapping("/create")
-    public ResponseEntity<?> createGroup(@RequestBody CreateGroupDTO dto) {
+    public ResponseEntity<?> createGroup(@RequestBody String groupName) {
         try {
-            groupService.createGroup(dto);
-            return ResponseEntity.ok().body(new MessageResponse("Созана группа " + dto.getName()));
+            return ResponseEntity.ok().body(groupService.createGroup(groupName));
 
         } catch (RuntimeException e) {
-            log.error("Группа с названием  " + dto.getName() + " не создана. Error: "
+            log.error("Группа с названием  " + groupName + " не создана. Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Группа не создана. Error: "
@@ -61,9 +61,9 @@ public class GroupController {
     }
 
     //    для админа
-    @PostMapping("/add-student/{groupId}/{studentId}")
-    public ResponseEntity<?> addStudentToGroup(@PathVariable Long groupId,
-                                               @PathVariable Long studentId) {
+    @PostMapping("/add-student")
+    public ResponseEntity<?> addStudentToGroup(@RequestParam("groupId") Long groupId,
+                                               @RequestParam("studentId") Long studentId) {
         try {
             groupService.addStudentToGroup(groupId, studentId);
             return ResponseEntity.ok().body(new MessageResponse("В группу с id=" + groupId
@@ -79,9 +79,9 @@ public class GroupController {
     }
 
     //    для админа
-    @PostMapping("/delete-student/{groupId}/{studentId}")
-    public ResponseEntity<?> deleteStudentFromGroup(@PathVariable Long groupId,
-                                                    @PathVariable Long studentId) {
+    @PostMapping("/delete-student")
+    public ResponseEntity<?> deleteStudentFromGroup(@RequestParam("groupId") Long groupId,
+                                                    @RequestParam("studentId") Long studentId) {
         groupService.deleteStudentFromGroup(groupId, studentId);
         return ResponseEntity.ok().body(new MessageResponse("Из группы с id=" + groupId
                 + " удалён студент с id=" + studentId));

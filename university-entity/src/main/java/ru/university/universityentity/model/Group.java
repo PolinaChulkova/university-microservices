@@ -5,12 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "groups", schema = "students", catalog = "university-students")
@@ -27,31 +26,42 @@ public class Group {
     private String name;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private List<Student> students = new ArrayList<>();
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Student> students = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "group_tasks", joinColumns = @JoinColumn(name = "group_id"),
             schema = "students", catalog = "university-students")
     @Column(name = "tasksId")
-    private List<Long> tasksId = new ArrayList<>();
+    private Set<Long> tasksId = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "group_subjects", joinColumns = @JoinColumn(name = "group_id"),
             schema = "students", catalog = "university-students")
     @Column(name = "subjectsId")
-    private List<Long> subjectsId = new ArrayList<>();
+    private Set<Long> subjectsId = new HashSet<>();
+
+    public Group(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+
         Group group = (Group) o;
-        return id != null && Objects.equals(id, group.id);
+
+        if (!Objects.equals(id, group.id)) return false;
+        if (!Objects.equals(name, group.name)) return false;
+        return Objects.equals(students, group.students);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (students != null ? students.hashCode() : 0);
+        return result;
     }
 }

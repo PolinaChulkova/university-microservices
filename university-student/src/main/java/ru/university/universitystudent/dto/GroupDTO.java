@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collection;
-
 @AllArgsConstructor
 @Getter@Setter
-public class CreateGroupDTO {
+public class GroupDTO {
     private String name;
-    private Collection<Long> studentsId;
+    private String name2;
 }

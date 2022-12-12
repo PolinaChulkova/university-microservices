@@ -29,11 +29,10 @@ public class StudentController {
     @PostMapping("/create")
     public ResponseEntity<?> createStudent(@RequestBody StudentDTO dto) {
         try {
-            studentService.createStudent(dto);
-            return ResponseEntity.ok().body(new MessageResponse("Создан студент с email: " + dto.getEmail()));
+            return ResponseEntity.ok().body(studentService.createStudent(dto));
 
         } catch (RuntimeException e) {
-            log.error("Студент с email: " + dto.getEmail() + " не создан. {}"
+            log.error("Студент с email: " + dto.getEmail() + " не создан. Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Студент с email: " + dto.getEmail()
@@ -45,11 +44,10 @@ public class StudentController {
     public ResponseEntity<?> updateStudent(@PathVariable Long studentId,
                                            @RequestBody StudentDTO dto) {
         try {
-            studentService.updateStudent(studentId, dto);
-            return ResponseEntity.ok().body(new MessageResponse("Обновлён студент с email: " + dto.getEmail()));
+            return ResponseEntity.ok().body(studentService.updateStudent(studentId, dto));
 
         } catch (RuntimeException e) {
-            log.error("Студент с Id= " + studentId + " не обновлён. {}"
+            log.error("Студент с Id= " + studentId + " не обновлён. Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Студент с email: " + dto.getEmail()
