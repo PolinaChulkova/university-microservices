@@ -6,15 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Task;
 import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.repo.TaskRepo;
+import ru.university.universityutils.TeacherWebClientBuilder;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -26,6 +27,8 @@ public class TaskService {
     private final TaskRepo taskRepo;
     private final FileService fileService;
     private final TeacherService teacherService;
+
+    private final TeacherWebClientBuilder teacherWebClientBuilder;
 
     public Task createTask(CreateTaskDTO dto) {
         Teacher teacher = teacherService.findTeacherById(dto.getTeacherId());
@@ -74,10 +77,9 @@ public class TaskService {
             return task;
     }
 
-//    public List<Task> findAllTasksBySubjectForStudent(Long subjectId, Long studentId) {
-//        return taskRepo.findBySubjectIdAndGroupId(subjectId,
-//                studentService.findStudentById(studentId).getGroup().getId());
-//    }
+    public List<Task> findTasksBySubjectIdAndGroupId(Long subjectId, Long groupId) {
+        return taskRepo.findBySubjectIdAndGroupId(subjectId, groupId);
+    }
 
 //    public Task findTaskByIdForStudent(Long taskId, Long studentId) {
 //        List<Long> tasksId= studentService.findStudentById(studentId).getGroup().getTasksId();

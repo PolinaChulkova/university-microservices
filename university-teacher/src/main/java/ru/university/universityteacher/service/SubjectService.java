@@ -39,11 +39,12 @@ public class SubjectService {
             return subject;
     }
 
-//    public void addGroupToSubject(Long groupId, Long subjectId) {
-//        Subject subject = findSubjectById(subjectId);
-//        subject.getGroupsId().add(groupId);
-//        subjectRepo.save(subject);
-//    }
+    public Subject addGroupIdToSubject(Long groupId, Long subjectId) {
+        Subject subject = findSubjectById(subjectId);
+        subject.getGroupsId().add(groupId);
+        subjectRepo.save(subject);
+        return subject;
+    }
 
     public void addTeacherAndGroupToSubject(Long teacherId, Long groupId, Long subjectId) {
             Subject subject = findSubjectById(subjectId);

@@ -21,7 +21,7 @@ public class GroupService {
     public Page<Group> findAllGroups(Pageable pageable) {
         return groupRepo.findAll(pageable);
     }
-
+//
 //    public Page<Group> findTeacherGroups(Long teacherId, Pageable pageable) {
 //        List<Group> groups = teacherService.findTeacherById(teacherId)
 //                .getGroupsId().stream().map(this::findGroupById).collect(Collectors.toList());
@@ -47,6 +47,10 @@ public class GroupService {
         student.setGroup(group);
         studentService.save(student);
         groupRepo.save(group);
+    }
+
+    public Group addSubjectIdToGroup(Long subjectId, Long groupId) {
+        Group group = f
     }
 
     public void deleteStudentFromGroup(Long groupId, Long studentId) {

@@ -9,6 +9,9 @@ import ru.university.universityentity.model.TaskAnswer;
 import ru.university.universitystudent.dto.CreateTaskAnswerDTO;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.service.TaskAnswerService;
+import ru.university.universityutils.TeacherWebClientBuilder;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/task-answer")
@@ -17,6 +20,7 @@ import ru.university.universitystudent.service.TaskAnswerService;
 public class TaskAnswerController {
 
     private final TaskAnswerService taskAnswerService;
+    private final TeacherWebClientBuilder teacherWebClientBuilder;
 //    private final AmqpTemplate amqpTemplate;
 
     @GetMapping("/for-student/{studentId}/{taskId}")
@@ -25,11 +29,25 @@ public class TaskAnswerController {
         return ResponseEntity.ok().body(taskAnswerService.getTaskAnswerForStudent(taskId, studentId));
     }
 
-//    @GetMapping("/for-teacher/{teacherId}/{taskId}")
-//    public ResponseEntity<?> getTaskAnswersForTeacher(@PathVariable Long teacherId,
-//                                                      @PathVariable Long taskId) {
-//        return ResponseEntity.ok().body(taskAnswerService.getTaskAnswersForTeacher(taskId, teacherId));
-//    }
+    @GetMapping("/for-teacher/{teacherId}/{taskId}")
+    public ResponseEntity<?> getTaskAnswersForTeacher(@PathVariable Long teacherId,
+                                                      @PathVariable Long taskId) {
+        try {
+            return ResponseEntity.ok().body(
+                    teacherWebClientBuilder.findTaskByIdAndTeacherId(taskId, teacherId)
+                            .getTaskAnswersId()
+                            .stream()
+                            .map(taskAnswerService::findTaskAnswerById)
+                            .collect(Collectors.toList())
+            );
+        } catch (RuntimeException e) {
+            log.error("Не удалось получить ответы на задание c id = " + taskId + "."
+                    + " Error: " + e.getLocalizedMessage());
+
+            return ResponseEntity.internalServerError().body("Не удалось получить ответы на задание. Error: "
+                    + e.getLocalizedMessage());
+        }
+    }
 
     @PostMapping("/send")
     private ResponseEntity<?> sendTaskAnswer(@RequestBody CreateTaskAnswerDTO dto) {

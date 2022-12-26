@@ -1,13 +1,19 @@
 package ru.university.universitystudent.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.universitystudent.dto.GroupDTO;
+import ru.university.universityentity.model.Group;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.service.GroupService;
+import ru.university.universityutils.TeacherWebClientBuilder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/group")
@@ -16,22 +22,27 @@ import ru.university.universitystudent.service.GroupService;
 public class GroupController {
 
     private final GroupService groupService;
+    private final TeacherWebClientBuilder teacherWebClientBuilder;
 
     @GetMapping("/{groupId}")
     public ResponseEntity<?> getGroup(@PathVariable Long groupId) {
         return ResponseEntity.ok().body(groupService.findGroupById(groupId));
     }
 
-//    @GetMapping("/groups/{teacherId}")
-//    public ResponseEntity<?> findTeacherGroups(
-//            @PathVariable Long teacherId,
-//            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-//            @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
-//
-//        Pageable pageable = PageRequest.of(page, size);
-//        return ResponseEntity.ok().body(groupService.findTeacherGroups(teacherId, pageable)
-//                .getContent());
-//    }
+    @GetMapping("/groups/{teacherId}")
+    public ResponseEntity<?> findTeacherGroups(
+            @PathVariable Long teacherId,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<Group> groups = teacherWebClientBuilder.findTeacherById(teacherId)
+                .getGroupsId()
+                .stream()
+                .map(groupService::findGroupById)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PageImpl<Group>(groups, pageable, size).getContent());
+    }
 
     @GetMapping("/students/{groupId}")
     public ResponseEntity<?> getStudentsByGroup(@PathVariable Long groupId) {
@@ -70,7 +81,7 @@ public class GroupController {
                     + " добавлен студент с id=" + studentId));
 
         } catch (RuntimeException e) {
-            log.error("Студент с id= " + studentId + " не добавлен в группу с id=" + groupId + ". {}"
+            log.error("Студент с id= " + studentId + " не добавлен в группу с id=" + groupId + ". Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Студент не добавлен в группу. " +
@@ -85,5 +96,21 @@ public class GroupController {
         groupService.deleteStudentFromGroup(groupId, studentId);
         return ResponseEntity.ok().body(new MessageResponse("Из группы с id=" + groupId
                 + " удалён студент с id=" + studentId));
+    }
+
+    //    для админа
+    @PostMapping("/add-subject")
+    public ResponseEntity<?> addSubjectToGroup(@RequestParam("groupId") Long groupId,
+                                               @RequestParam("subjectId") Long subjectId) {
+        try {
+            groupService.addSubjectIdToGroup(subjectId, groupId);
+            return ResponseEntity.ok().body(new MessageResponse("Предмет добавлен к группе"));
+        } catch (RuntimeException e) {
+            log.error("Предмет с id = " + subjectId + " не добавлен к группе с id=" + groupId + ". Error: "
+                    + e.getLocalizedMessage());
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Предмет не добавлен к группе. " +
+                    "Error: " + e.getLocalizedMessage()));
+        }
     }
 }

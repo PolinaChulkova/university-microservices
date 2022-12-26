@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.service.TeacherService;
+import ru.university.universityutils.TeacherWebClientBuilder;
 
 @RestController
 @RequestMapping("/teacher")
@@ -15,6 +16,7 @@ import ru.university.universityteacher.service.TeacherService;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final TeacherWebClientBuilder teacherWebClientBuilder;
 
 //    @RabbitListener(queues = "teacherQueue")
 //    public void notificationListener(String message) {

@@ -32,6 +32,10 @@ public class Task {
     @Column(name = "group_id")
     private Long groupId;
 
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
+
     @ElementCollection
     @CollectionTable(name = "tasks_files", joinColumns = @JoinColumn(name = "task_id"),
             schema = "teachers", catalog = "university-teachers")
@@ -46,7 +50,7 @@ public class Task {
     @CollectionTable(name = "task_task_answers", joinColumns = @JoinColumn(name = "task_id"),
             schema = "teachers", catalog = "university-teachers")
     @Column(name = "task_answers_id")
-    private Set<Long> taskAnswers = new HashSet<>();
+    private Set<Long> taskAnswersId = new HashSet<>();
 
     public Task(String name, String description, Date startLine, Date deadLine,
                 Long groupId, Teacher teacher) {

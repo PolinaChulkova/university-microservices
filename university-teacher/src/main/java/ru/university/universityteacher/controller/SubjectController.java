@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.SubjectDTO;
 import ru.university.universityteacher.service.SubjectService;
+import ru.university.universityutils.StudentWebClientBuilder;
 
 @RestController
 @RequestMapping("/subject")
@@ -17,6 +18,7 @@ import ru.university.universityteacher.service.SubjectService;
 public class SubjectController {
 
     private final SubjectService subjectService;
+    private final StudentWebClientBuilder studentWebClientBuilder;
 
     @GetMapping("/{subjectId}")
     public ResponseEntity<?> getSubject(@PathVariable Long subjectId) {
@@ -91,23 +93,25 @@ public class SubjectController {
         }
     }
 
-//    //    для админа
-//    @PostMapping("/add-group/{subjectId}/{groupId}")
-//    public ResponseEntity<?> addGroupToSubject(@PathVariable Long subjectId,
-//                                               @PathVariable Long groupId) {
-//        try {
-//            subjectService.addGroupToSubject(groupId, subjectId);
-//            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
-//                    " добавлена группа с id=" + groupId));
-//
-//        } catch (RuntimeException e) {
-//            log.error("Не удалось добавить группу к предмету. Error: "
-//                    + e.getLocalizedMessage());
-//
-//            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
-//                    + e.getLocalizedMessage()));
-//        }
-//    }
+    //    для админа
+    @PostMapping("/add-group/{subjectId}/{groupId}")
+    public ResponseEntity<?> addGroupToSubject(@PathVariable Long subjectId,
+                                               @PathVariable Long groupId) {
+        try {
+            subjectService.addGroupIdToSubject(groupId, subjectId);
+            studentWebClientBuilder.addSubjectToGroup(groupId, subjectId);
+
+            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
+                    " добавлена группа с id=" + groupId));
+
+        } catch (RuntimeException e) {
+            log.error("Не удалось добавить группу к предмету. Error: "
+                    + e.getLocalizedMessage());
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
+                    + e.getLocalizedMessage()));
+        }
+    }
 
     //    для админа
     @PostMapping("/detach-teacher/{subjectId}/{teacherId}")

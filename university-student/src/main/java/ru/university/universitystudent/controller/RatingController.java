@@ -9,6 +9,7 @@ import ru.university.universitystudent.dto.CreateRatingDTO;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.UpdateRatingDTO;
 import ru.university.universitystudent.service.RatingService;
+import ru.university.universityutils.TeacherWebClientBuilder;
 
 @RestController
 @RequestMapping("/rating")
@@ -17,11 +18,17 @@ import ru.university.universitystudent.service.RatingService;
 public class RatingController {
 
     private final RatingService ratingService;
+    private final TeacherWebClientBuilder teacherWebClientBuilder;
 //    private final AmqpTemplate amqpTemplate;
 
     @PostMapping("/create")
     public ResponseEntity<?> createRating(@RequestBody CreateRatingDTO dto) {
         try {
+            if(teacherWebClientBuilder.findTaskByIdAndTeacherId(
+                    dto.getTaskId(), dto.getTeacherId()) == null)
+                throw new RuntimeException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
+                        + ", т.к. он закреплен за другим преподавателем");
+
             Rating rating = ratingService.createRating(dto);
 //            amqpTemplate.convertAndSend("studentQueue", "Выставлена оценка по предмету \""
 //                    + rating.getSubject().getSubjectName() + "\"");

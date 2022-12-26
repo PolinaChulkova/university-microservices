@@ -12,6 +12,9 @@ import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.service.TaskService;
+import ru.university.universityutils.StudentWebClientBuilder;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/task")
@@ -20,19 +23,38 @@ import ru.university.universityteacher.service.TaskService;
 public class TaskController {
 
     private final TaskService taskService;
+    private final StudentWebClientBuilder studentWebClientBuilder;
 //    private final AmqpTemplate template;
 
-//    @GetMapping("/student/{studentId}/{taskId}")
-//    public ResponseEntity<?> getStudentTask(@PathVariable Long studentId,
-//                                            @PathVariable Long taskId) {
-//        return ResponseEntity.ok().body(taskService.findTaskByIdForStudent(taskId, studentId));
-//    }
+    @GetMapping("/student/{studentId}/{taskId}")
+    public ResponseEntity<?> getStudentTask(@PathVariable Long studentId) {
+        return ResponseEntity.ok().body(
+                studentWebClientBuilder.findStudentById(studentId).getGroup()
+                        .getTasksId()
+                        .stream()
+                        .map(taskService::findTaskById)
+                        .collect(Collectors.toList())
+        );
+    }
 
-//    @GetMapping("/subject/{subjectId}/{studentId}")
-//    public ResponseEntity<?> getAllTaskBySubjectForStudent(@PathVariable Long subjectId,
-//                                                           @PathVariable Long studentId) {
-//        return ResponseEntity.ok().body(taskService.findAllTasksBySubjectForStudent(subjectId, studentId));
-//    }
+    @GetMapping("/subject/{subjectId}/{studentId}")
+    public ResponseEntity<?> getAllTaskBySubjectForStudent(@PathVariable Long subjectId,
+                                                           @PathVariable Long studentId) {
+        try {
+            return ResponseEntity.ok().body(
+                    taskService.findTasksBySubjectIdAndGroupId(
+                            subjectId,
+                            studentWebClientBuilder.findStudentById(studentId).getGroup().getId()));
+
+        } catch (RuntimeException e) {
+            log.error("Задания для студента с id = " + subjectId + " по предмету с id = "
+                    + subjectId + " не найдены. Error: "
+                    + e.getLocalizedMessage());
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Задания не найдены. Error: "
+                    + e.getLocalizedMessage()));
+        }
+    }
 
     @GetMapping("/teacher/{taskId}/{teacherId}")
     public ResponseEntity<?> getTeacherTask(@PathVariable Long taskId,

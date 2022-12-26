@@ -18,6 +18,7 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
     @Query(value = "SELECT t FROM Task t JOIN t.teacher.subjects s WHERE s.id=?1 AND t.groupId=?2")
     List<Task> findBySubjectIdAndGroupId(Long subjectId, Long groupId);
 
+    List<Task> findAllBySubject_Id(Long subjectId);
     Page<Task> findAllByTeacher_Id(Long teacherId, Pageable pageable);
 
     Optional<Task> findByIdAndTeacher_Id(Long id, Long teacherId);

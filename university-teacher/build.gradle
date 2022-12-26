@@ -25,6 +25,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     implementation 'ru.university:university-entity'
+    implementation 'ru.university:university-utils'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
