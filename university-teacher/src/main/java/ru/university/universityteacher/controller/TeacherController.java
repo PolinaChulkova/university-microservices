@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.service.TeacherService;
-import ru.university.universityutils.TeacherWebClientBuilder;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/teacher")
@@ -16,7 +17,6 @@ import ru.university.universityutils.TeacherWebClientBuilder;
 public class TeacherController {
 
     private final TeacherService teacherService;
-    private final TeacherWebClientBuilder teacherWebClientBuilder;
 
 //    @RabbitListener(queues = "teacherQueue")
 //    public void notificationListener(String message) {
@@ -25,7 +25,16 @@ public class TeacherController {
 
     @GetMapping("/{teacherId}")
     public ResponseEntity<?> findTeacherById(@PathVariable Long teacherId) {
-        return ResponseEntity.ok().body(teacherService.findTeacherById(teacherId));
+        try {
+            return ResponseEntity.ok().body(teacherService.findTeacherById(teacherId));
+
+        } catch (Exception e) {
+            log.error("Преподаватель с id = " + teacherId + " не найден. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body("Преподаватель с id = " + teacherId + " не найден. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+        }
     }
 
     //    для админа

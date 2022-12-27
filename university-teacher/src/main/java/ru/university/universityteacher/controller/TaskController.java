@@ -13,7 +13,6 @@ import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.feign.StudentFeignClient;
 import ru.university.universityteacher.service.TaskService;
-import ru.university.universityutils.StudentWebClientBuilder;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +46,10 @@ public class TaskController {
             return ResponseEntity.ok().body(
                     taskService.findTasksBySubjectIdAndGroupId(
                             subjectId,
-                            studentWebClientBuilder.findStudentById(studentId).getGroup().getId()));
+                            Objects.requireNonNull(studentFeignClient
+                                            .findStudentById(studentId)
+                                            .getBody())
+                                    .getGroup().getId()));
 
         } catch (RuntimeException e) {
             log.error("Задания для студента с id = " + subjectId + " по предмету с id = "
@@ -59,9 +61,9 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/teacher/{taskId}/{teacherId}")
-    public ResponseEntity<?> getTeacherTask(@PathVariable Long taskId,
-                                            @PathVariable Long teacherId) {
+    @GetMapping("/teacher")
+    public ResponseEntity<?> getTeacherTask(@RequestParam("taskId") Long taskId,
+                                            @RequestParam("teacherId") Long teacherId) {
         return ResponseEntity.ok().body(taskService.findTaskByIdForTeacher(taskId, teacherId));
     }
 

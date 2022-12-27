@@ -8,9 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityentity.model.Group;
+import ru.university.universityentity.model.Teacher;
 import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.GroupService;
-import ru.university.universityutils.TeacherWebClientBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,21 +24,21 @@ import java.util.stream.Collectors;
 public class GroupController {
 
     private final GroupService groupService;
-    private final TeacherWebClientBuilder teacherWebClientBuilder;
+    private final TeacherFeignClient teacherFeignClient;
 
     @GetMapping("/{groupId}")
     public ResponseEntity<?> getGroup(@PathVariable Long groupId) {
         return ResponseEntity.ok().body(groupService.findGroupById(groupId));
     }
 
-    @GetMapping("/groups/{teacherId}")
+    @GetMapping("/groups")
     public ResponseEntity<?> findTeacherGroups(
-            @PathVariable Long teacherId,
+            @RequestParam Long teacherId,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        List<Group> groups = teacherWebClientBuilder.findTeacherById(teacherId)
+        List<Group> groups = teacherFeignClient.findTeacherById(teacherId).getBody()
                 .getGroupsId()
                 .stream()
                 .map(groupService::findGroupById)

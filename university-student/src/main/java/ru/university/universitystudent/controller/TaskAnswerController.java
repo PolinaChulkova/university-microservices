@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.university.universityentity.model.TaskAnswer;
 import ru.university.universitystudent.dto.CreateTaskAnswerDTO;
 import ru.university.universitystudent.dto.MessageResponse;
+import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.TaskAnswerService;
-import ru.university.universityutils.TeacherWebClientBuilder;
 
 import java.util.stream.Collectors;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class TaskAnswerController {
 
     private final TaskAnswerService taskAnswerService;
-    private final TeacherWebClientBuilder teacherWebClientBuilder;
+    private final TeacherFeignClient teacherFeignClient;
 //    private final AmqpTemplate amqpTemplate;
 
     @GetMapping("/for-student/{studentId}/{taskId}")
@@ -34,7 +34,7 @@ public class TaskAnswerController {
                                                       @PathVariable Long taskId) {
         try {
             return ResponseEntity.ok().body(
-                    teacherWebClientBuilder.findTaskByIdAndTeacherId(taskId, teacherId)
+                    teacherFeignClient.getTeacherTask(taskId, teacherId).getBody()
                             .getTaskAnswersId()
                             .stream()
                             .map(taskAnswerService::findTaskAnswerById)

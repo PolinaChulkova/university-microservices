@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityteacher.dto.MessageResponse;
+import ru.university.universityteacher.feign.StudentFeignClient;
 import ru.university.universityteacher.service.SubjectService;
 import ru.university.universityteacher.service.TeacherService;
-import ru.university.universityutils.StudentWebClientBuilder;
 
 import java.util.Arrays;
 
@@ -21,7 +21,7 @@ public class SubjectController {
 
     private final SubjectService subjectService;
     private final TeacherService teacherService;
-    private final StudentWebClientBuilder studentWebClientBuilder;
+    private final StudentFeignClient studentFeignClient;
 
     @GetMapping("/{subjectId}")
     public ResponseEntity<?> getSubject(@PathVariable Long subjectId) {
@@ -126,10 +126,10 @@ public class SubjectController {
         try {
             subjectService.addGroupIdToSubject(groupId, subjectId);
             teacherService.addGroupIdToTeacher(teacherId, subjectId, groupId);
-            studentWebClientBuilder.addSubjectToGroup(groupId, subjectId);
+            studentFeignClient.addSubjectToGroup(groupId, subjectId);
 
-            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
-                    " добавлена группа с id=" + groupId));
+            return ResponseEntity.ok().body(new MessageResponse("К предмету с id = " + subjectId +
+                    " добавлена группа с id = " + groupId));
 
         } catch (RuntimeException e) {
             log.error("Не удалось добавить группу к предмету. Error: "
@@ -149,15 +149,17 @@ public class SubjectController {
                                                     @RequestParam("groupId") Long groupId) {
         try {
             subjectService.detachGroupFromSubject(groupId, subjectId);
-            studentWebClientBuilder.detachSubjectFromGroup(groupId, subjectId);
-            return ResponseEntity.ok().body(new MessageResponse("Группа с id=" + groupId
-                    + " откреплёна от предмета с id=" + subjectId));
+            studentFeignClient.detachSubjectFromGroup(groupId, subjectId);
+
+            return ResponseEntity.ok().body(new MessageResponse("Группа с id = " + groupId
+                    + " откреплёна от предмета с id = " + subjectId));
 
         } catch (RuntimeException e) {
-            log.error("Не удалось открепить группу от предмета. Error: " + e.getLocalizedMessage());
+            log.error("Не удалось открепить группу от предмета. Error: "
+                    + Arrays.toString(e.getStackTrace()));
 
             return ResponseEntity.badRequest().body(new MessageResponse("Не удалось открепить группу от предмета " +
-                    "Error: ") + e.getLocalizedMessage());
+                    "Error: " + Arrays.toString(e.getStackTrace())));
         }
     }
 }
