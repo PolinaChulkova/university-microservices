@@ -11,9 +11,11 @@ import ru.university.universityentity.model.Task;
 import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
+import ru.university.universityteacher.feign.StudentFeignClient;
 import ru.university.universityteacher.service.TaskService;
 import ru.university.universityutils.StudentWebClientBuilder;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,13 +25,14 @@ import java.util.stream.Collectors;
 public class TaskController {
 
     private final TaskService taskService;
-    private final StudentWebClientBuilder studentWebClientBuilder;
+    private final StudentFeignClient studentFeignClient;
+
 //    private final AmqpTemplate template;
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentTask(@PathVariable Long studentId) {
         return ResponseEntity.ok().body(
-                studentWebClientBuilder.findStudentById(studentId).getGroup()
+                Objects.requireNonNull(studentFeignClient.findStudentById(studentId).getBody()).getGroup()
                         .getTasksId()
                         .stream()
                         .map(taskService::findTaskById)
