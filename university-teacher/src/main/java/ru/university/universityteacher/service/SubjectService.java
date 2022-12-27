@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Subject;
 import ru.university.universityentity.model.Teacher;
-import ru.university.universityteacher.dto.SubjectDTO;
 import ru.university.universityteacher.repo.SubjectRepo;
 
 import javax.transaction.Transactional;
@@ -22,7 +21,7 @@ public class SubjectService {
     private final TeacherService teacherService;
 
     public Page<Subject> searchTeacherSubject(Long teacherId, String key, Pageable pageable) {
-            return subjectRepo.findTeacherSubject(teacherId, key, pageable);
+        return subjectRepo.searchTeacherSubject(teacherId, key, pageable);
     }
 
     public Page<Subject> findAllTeacherSubjects(Long teacherId, Pageable pageable) {
@@ -33,38 +32,37 @@ public class SubjectService {
         return subjectRepo.findAllByGroupsIdIsContaining(groupId, pageable);
     }
 
-    public Subject createSubject(SubjectDTO dto) {
-            Subject subject = new Subject(dto.getSubjectName());
-            subjectRepo.save(subject);
-            return subject;
+    public Subject createSubject(String subjectName) {
+        Subject subject = new Subject(subjectName);
+        subjectRepo.save(subject);
+        return subject;
     }
 
     public Subject addGroupIdToSubject(Long groupId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
         subject.getGroupsId().add(groupId);
         subjectRepo.save(subject);
+
         return subject;
     }
 
-    public void addTeacherAndGroupToSubject(Long teacherId, Long groupId, Long subjectId) {
-            Subject subject = findSubjectById(subjectId);
-            Teacher teacher = teacherService.findTeacherById(teacherId);
-            subject.getTeachers().add(teacher);
-            teacher.getGroupsId().add(groupId);
-            subject.getGroupsId().add(groupId);
-            subjectRepo.save(subject);
+    public void addTeacherToSubject(Long teacherId, Long subjectId) {
+        Subject subject = findSubjectById(subjectId);
+        Teacher teacher = teacherService.findTeacherById(teacherId);
+        subject.getTeachers().add(teacher);
+        subjectRepo.save(subject);
     }
 
     public void detachTeacherFromSubject(Long teacherId, Long subjectId) {
-            Subject subject = findSubjectById(subjectId);
-            subject.getTeachers().remove(teacherService.findTeacherById(teacherId));
-            subjectRepo.save(subject);
+        Subject subject = findSubjectById(subjectId);
+        subject.getTeachers().remove(teacherService.findTeacherById(teacherId));
+        subjectRepo.save(subject);
     }
 
     public void detachGroupFromSubject(Long groupId, Long subjectId) {
-            Subject subject = findSubjectById(subjectId);
-            subject.getGroupsId().remove(groupId);
-            subjectRepo.save(subject);
+        Subject subject = findSubjectById(subjectId);
+        subject.getGroupsId().remove(groupId);
+        subjectRepo.save(subject);
     }
 
     public Subject findSubjectByName(String name) {
@@ -74,9 +72,9 @@ public class SubjectService {
     }
 
     public void deleteSubjectById(Long subjectId) {
-      if (subjectRepo.existsById(subjectId)) subjectRepo.deleteById(subjectId);
-      else throw new RuntimeException("Нельзя совершить удаление! " +
-              "Предмет с id=" + subjectId + " не существует.");
+        if (subjectRepo.existsById(subjectId)) subjectRepo.deleteById(subjectId);
+        else throw new RuntimeException("Нельзя совершить удаление! " +
+                "Предмет с id=" + subjectId + " не существует.");
     }
 
     public Subject findSubjectById(Long subjectId) {

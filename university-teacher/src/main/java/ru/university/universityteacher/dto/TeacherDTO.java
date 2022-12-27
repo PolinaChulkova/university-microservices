@@ -7,9 +7,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter@Setter
 public class TeacherDTO {
-    private String fullName;
-    private String email;
-    private String password;
-    private String phoneNum;
-    private String academicDegree;
+    private final String fullName;
+    private final String email;
+    private final String password;
+    private final String phoneNum;
+    private final String academicDegree;
 }

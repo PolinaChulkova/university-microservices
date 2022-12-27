@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "teacher", schema = "teachers", catalog = "university-teachers")
+@Table(name = "teacher", schema = "teacher", catalog = "university-teacher")
 @Getter@Setter
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -38,12 +38,12 @@ public class Teacher {
     @JoinTable(name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     private Set<Subject> subjects;
 
     @ElementCollection
     @CollectionTable(name = "teacher_groups", joinColumns = @JoinColumn(name = "teacher_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     @Column(name = "groups_id")
     private Set<Long> groupsId;
 

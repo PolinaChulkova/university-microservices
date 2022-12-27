@@ -9,11 +9,11 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter@Setter
 public class CreateTaskDTO {
-    private String name;
-    private String description;
-    private Date startLine;
-    private Date deadLine;
+    private final String name;
+    private final String description;
+    private final Date startLine;
+    private final Date deadLine;
     //    после созании Security преподаватель будет получаться из Principal
-    private Long teacherId;
-    private Long groupId;
+    private final Long teacherId;
+    private final Long groupId;
 }

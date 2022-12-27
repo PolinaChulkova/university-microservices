@@ -37,6 +37,11 @@
                   <project path="$PROJECT_DIR$/university-teacher" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/university-utils" name="university-utils">
+                <projects>
+                  <project path="$PROJECT_DIR$/university-utils" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -53,6 +58,7 @@
             <option value="$PROJECT_DIR$/university-gateway" />
             <option value="$PROJECT_DIR$/university-student" />
             <option value="$PROJECT_DIR$/university-teacher" />
+            <option value="$PROJECT_DIR$/university-utils" />
           </set>
         </option>
       </GradleProjectSettings>

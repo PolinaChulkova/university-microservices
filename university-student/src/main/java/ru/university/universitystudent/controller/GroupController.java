@@ -12,6 +12,7 @@ import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.service.GroupService;
 import ru.university.universityutils.TeacherWebClientBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,18 +100,36 @@ public class GroupController {
     }
 
     //    для админа
+//    используется в studentWebClientBuilder
     @PostMapping("/add-subject")
     public ResponseEntity<?> addSubjectToGroup(@RequestParam("groupId") Long groupId,
                                                @RequestParam("subjectId") Long subjectId) {
         try {
             groupService.addSubjectIdToGroup(subjectId, groupId);
             return ResponseEntity.ok().body(new MessageResponse("Предмет добавлен к группе"));
+
         } catch (RuntimeException e) {
             log.error("Предмет с id = " + subjectId + " не добавлен к группе с id=" + groupId + ". Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Предмет не добавлен к группе. " +
                     "Error: " + e.getLocalizedMessage()));
+        }
+    }
+
+    @PostMapping("/detach-subject")
+    public ResponseEntity<?> detachSubjectFromGroup(@RequestParam("groupId") Long groupId,
+                                                    @RequestParam("subjectId") Long subjectId) {
+        try {
+            groupService.detachSubjectIdFromGroup(subjectId, groupId);
+            return ResponseEntity.ok().body(new MessageResponse("Группа откреплена от предмета"));
+
+        } catch (RuntimeException e) {
+            log.error("Группа с id = " + groupId + " не откреплена от предмета с id=" + subjectId + ". Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Группа не откреплена от пердмета " +
+                    "Error: " + Arrays.toString(e.getStackTrace())));
         }
     }
 }

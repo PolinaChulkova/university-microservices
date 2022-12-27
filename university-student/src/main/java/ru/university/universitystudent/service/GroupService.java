@@ -9,6 +9,8 @@ import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
 
+import java.util.Arrays;
+
 
 @Service
 @RequiredArgsConstructor
@@ -49,8 +51,16 @@ public class GroupService {
         groupRepo.save(group);
     }
 
-    public Group addSubjectIdToGroup(Long subjectId, Long groupId) {
-        Group group = f
+    public void addSubjectIdToGroup(Long subjectId, Long groupId) {
+        Group group = findGroupById(groupId);
+        group.getSubjectsId().add(subjectId);
+        save(group);
+    }
+
+    public void detachSubjectIdFromGroup(Long subjectId, Long groupId) {
+        Group group = findGroupById(groupId);
+        group.getSubjectsId().remove(subjectId);
+        save(group);
     }
 
     public void deleteStudentFromGroup(Long groupId, Long studentId) {
@@ -87,7 +97,10 @@ public class GroupService {
             groupRepo.save(group);
         } catch (RuntimeException e) {
             log.error("Группа " + group.getName() + " не сохранена. " +
-                    "Error: " + e.getLocalizedMessage());
+                    "Error: " + Arrays.toString(e.getStackTrace()));
+
+            throw new RuntimeException("Группа " + group.getName() + " не сохранена. " +
+                    "Error: " + Arrays.toString(e.getStackTrace()));
         }
     }
 }

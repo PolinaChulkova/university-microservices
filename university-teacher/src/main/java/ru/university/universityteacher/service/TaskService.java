@@ -11,6 +11,7 @@ import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.repo.TaskRepo;
+import ru.university.universityutils.StudentWebClientBuilder;
 import ru.university.universityutils.TeacherWebClientBuilder;
 
 import javax.transaction.Transactional;
@@ -27,8 +28,6 @@ public class TaskService {
     private final TaskRepo taskRepo;
     private final FileService fileService;
     private final TeacherService teacherService;
-
-    private final TeacherWebClientBuilder teacherWebClientBuilder;
 
     public Task createTask(CreateTaskDTO dto) {
         Teacher teacher = teacherService.findTeacherById(dto.getTeacherId());

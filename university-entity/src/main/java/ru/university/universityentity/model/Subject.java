@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "subject", schema = "teachers", catalog = "university-teachers")
+@Table(name = "subject", schema = "teacher", catalog = "university-teacher")
 @Getter@Setter
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class Subject {
 
     @ElementCollection
     @CollectionTable(name = "subject_groups", joinColumns = @JoinColumn(name = "subject_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     private Set<Long> groupsId = new HashSet<>();
 
     @JsonIgnore
@@ -31,7 +31,7 @@ public class Subject {
     @JoinTable(name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "subject_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     private Set<Teacher> teachers = new HashSet<>();
 
     public Subject(String subjectName) {

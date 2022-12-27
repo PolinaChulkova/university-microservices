@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityteacher.dto.MessageResponse;
-import ru.university.universityteacher.dto.SubjectDTO;
 import ru.university.universityteacher.service.SubjectService;
+import ru.university.universityteacher.service.TeacherService;
 import ru.university.universityutils.StudentWebClientBuilder;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/subject")
@@ -18,6 +20,7 @@ import ru.university.universityutils.StudentWebClientBuilder;
 public class SubjectController {
 
     private final SubjectService subjectService;
+    private final TeacherService teacherService;
     private final StudentWebClientBuilder studentWebClientBuilder;
 
     @GetMapping("/{subjectId}")
@@ -25,26 +28,26 @@ public class SubjectController {
         return ResponseEntity.ok().body(subjectService.findSubjectById(subjectId));
     }
 
-    @GetMapping("/student/all/{groupId}/{page}")
-    public ResponseEntity<?> getAllGroupSubjects(@PathVariable Long groupId,
-                                                 @PathVariable int page) {
+    @GetMapping("/student/all")
+    public ResponseEntity<?> getAllGroupSubjects(@RequestParam("groupId") Long groupId,
+                                                 @RequestParam("page") int page) {
         Pageable pageable = PageRequest.of(page, 5);
         return ResponseEntity.ok()
                 .body(subjectService.findAllGroupSubjects(groupId, pageable).getContent());
     }
 
-    @GetMapping("/teacher/search/{teacherId}/{page}")
-    public ResponseEntity<?> searchTeacherSubject(@PathVariable Long teacherId,
-                                                  @PathVariable int page,
+    @GetMapping("/teacher/search")
+    public ResponseEntity<?> searchTeacherSubject(@RequestParam("teacherId") Long teacherId,
+                                                  @RequestParam("page") int page,
                                                   @RequestParam("key") String key) {
         Pageable pageable = PageRequest.of(page, 5);
         return ResponseEntity.ok()
                 .body(subjectService.searchTeacherSubject(teacherId, key, pageable).getContent());
     }
 
-    @GetMapping("/teacher/all/{teacherId}/{page}")
-    public ResponseEntity<?> getAllTeacherSubjects(@PathVariable Long teacherId,
-                                                   @PathVariable int page) {
+    @GetMapping("/teacher/all")
+    public ResponseEntity<?> getAllTeacherSubjects(@RequestParam("teacherId") Long teacherId,
+                                                   @RequestParam("page") int page) {
         Pageable pageable = PageRequest.of(page, 5);
         return ResponseEntity.ok()
                 .body(subjectService.findAllTeacherSubjects(teacherId, pageable).getContent());
@@ -59,27 +62,27 @@ public class SubjectController {
     }
 
     //    для админа
+    //    можно убрать дто потом
     @PostMapping("/create")
-    public ResponseEntity<?> createSubject(@RequestBody SubjectDTO dto) {
+    public ResponseEntity<?> createSubject(@RequestBody String subjectName) {
         try {
-            return ResponseEntity.ok().body(subjectService.createSubject(dto));
+            return ResponseEntity.ok().body(subjectService.createSubject(subjectName));
 
         } catch (RuntimeException e) {
-            log.error("Предмет с названием " + dto.getSubjectName() + " не создан. Error: "
+            log.error("Предмет с названием " + subjectName + " не создан. Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Предмет: \""
-                    + dto.getSubjectName() + "\" не создан. Error: " + e.getLocalizedMessage()));
+                    + subjectName + "\" не создан. Error: " + e.getLocalizedMessage()));
         }
     }
 
     //    для админа
-    @PostMapping("/add-teacher-group")
-    public ResponseEntity<?> addTeacherAndGroupToSubject(@RequestParam("teacherId") Long teacherId,
-                                                         @RequestParam("groupId") Long groupId,
-                                                         @RequestParam("subjectId") Long subjectId) {
+    @PostMapping("/add-teacher")
+    public ResponseEntity<?> addTeacherToSubject(@RequestParam("teacherId") Long teacherId,
+                                                 @RequestParam("subjectId") Long subjectId) {
         try {
-            subjectService.addTeacherAndGroupToSubject(teacherId, groupId, subjectId);
+            subjectService.addTeacherToSubject(teacherId, subjectId);
             return ResponseEntity.ok().body(new MessageResponse("Преподаватель с id=" + teacherId
                     + " добавлен к предмету с id=" + subjectId));
 
@@ -94,29 +97,9 @@ public class SubjectController {
     }
 
     //    для админа
-    @PostMapping("/add-group/{subjectId}/{groupId}")
-    public ResponseEntity<?> addGroupToSubject(@PathVariable Long subjectId,
-                                               @PathVariable Long groupId) {
-        try {
-            subjectService.addGroupIdToSubject(groupId, subjectId);
-            studentWebClientBuilder.addSubjectToGroup(groupId, subjectId);
-
-            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
-                    " добавлена группа с id=" + groupId));
-
-        } catch (RuntimeException e) {
-            log.error("Не удалось добавить группу к предмету. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
-                    + e.getLocalizedMessage()));
-        }
-    }
-
-    //    для админа
-    @PostMapping("/detach-teacher/{subjectId}/{teacherId}")
-    public ResponseEntity<?> detachTeacherFromSubject(@PathVariable Long subjectId,
-                                                      @PathVariable Long teacherId) {
+    @PostMapping("/detach-teacher")
+    public ResponseEntity<?> detachTeacherFromSubject(@RequestParam("subjectId") Long subjectId,
+                                                      @RequestParam("teacherId") Long teacherId) {
         try {
             subjectService.detachTeacherFromSubject(teacherId, subjectId);
             return ResponseEntity.ok().body(new MessageResponse("Преподаватель с id=" + teacherId
@@ -132,12 +115,41 @@ public class SubjectController {
         }
     }
 
+    /**
+     * Добавление группы к предмету, при этом сразу выбирается преподаватель по этому предмету
+     */
     //    для админа
-    @PostMapping("/detach-group/{subjectId}/{groupId}")
-    public ResponseEntity<?> detachGroupFromSubject(@PathVariable Long subjectId,
-                                                    @PathVariable Long groupId) {
+    @PostMapping("/add-group")
+    public ResponseEntity<?> addGroupToSubjectAndToTeacher(@RequestParam("subjectId") Long subjectId,
+                                                           @RequestParam("groupId") Long groupId,
+                                                           @RequestParam("teacherId") Long teacherId) {
+        try {
+            subjectService.addGroupIdToSubject(groupId, subjectId);
+            teacherService.addGroupIdToTeacher(teacherId, subjectId, groupId);
+            studentWebClientBuilder.addSubjectToGroup(groupId, subjectId);
+
+            return ResponseEntity.ok().body(new MessageResponse("К предмету с id=" + subjectId +
+                    " добавлена группа с id=" + groupId));
+
+        } catch (RuntimeException e) {
+            log.error("Не удалось добавить группу к предмету. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Группа не добавлена к предмету. Error: "
+                    + Arrays.toString(e.getStackTrace())));
+        }
+    }
+
+    /**
+     * Отсоединение группы от предмета
+     */
+    //    для админа
+    @PostMapping("/detach-group")
+    public ResponseEntity<?> detachGroupFromSubject(@RequestParam("subjectId") Long subjectId,
+                                                    @RequestParam("groupId") Long groupId) {
         try {
             subjectService.detachGroupFromSubject(groupId, subjectId);
+            studentWebClientBuilder.detachSubjectFromGroup(groupId, subjectId);
             return ResponseEntity.ok().body(new MessageResponse("Группа с id=" + groupId
                     + " откреплёна от предмета с id=" + subjectId));
 

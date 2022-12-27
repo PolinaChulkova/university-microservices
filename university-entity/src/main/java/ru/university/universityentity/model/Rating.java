@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "rating", schema = "students", catalog = "university-students")
+@Table(name = "rating", schema = "student", catalog = "university-student")
 @Getter
 @Setter
 @EqualsAndHashCode

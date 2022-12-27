@@ -34,9 +34,23 @@ public class StudentWebClientBuilder {
                             .queryParam("groupId", groupId)
                             .queryParam("subjectId", subjectId)
                             .build())
-                    .retrieve()
-                    .bodyToFlux(Group.class)
-                    .blockFirst();
+                    .retrieve();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void detachSubjectFromGroup(Long groupId, Long subjectId) {
+        try {
+            WebClient.create(baseUriStudent)
+                    .post()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/group/detach-subject")
+                            .queryParam("groupId", groupId)
+                            .queryParam("subjectId", subjectId)
+                            .build())
+                    .retrieve();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

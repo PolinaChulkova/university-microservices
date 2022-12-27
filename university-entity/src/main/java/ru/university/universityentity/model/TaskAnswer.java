@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "task_answer", schema = "students", catalog = "university-students")
+@Table(name = "task_answer", schema = "student", catalog = "university-student")
 @Getter@Setter
 @NoArgsConstructor
 public class TaskAnswer {
@@ -27,7 +27,7 @@ public class TaskAnswer {
 
     @ElementCollection
     @CollectionTable(name = "answers_files", joinColumns = @JoinColumn(name = "task_answer_id"),
-            schema = "students", catalog = "university-students")
+            schema = "student", catalog = "university-student")
     @Column(name = "file_uri")
     private Set<String> filesUri;
 

@@ -26,7 +26,7 @@ public class TaskController {
     private final StudentWebClientBuilder studentWebClientBuilder;
 //    private final AmqpTemplate template;
 
-    @GetMapping("/student/{studentId}/{taskId}")
+    @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentTask(@PathVariable Long studentId) {
         return ResponseEntity.ok().body(
                 studentWebClientBuilder.findStudentById(studentId).getGroup()

@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "task", schema = "teachers", catalog = "university-teachers")
+@Table(name = "task", schema = "teacher", catalog = "university-teacher")
 @Getter@Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class Task {
 
     @ElementCollection
     @CollectionTable(name = "tasks_files", joinColumns = @JoinColumn(name = "task_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     @Column(name = "file_uri")
     private Set<String> filesUri = new HashSet<>();
 
@@ -48,7 +48,7 @@ public class Task {
 
     @ElementCollection
     @CollectionTable(name = "task_task_answers", joinColumns = @JoinColumn(name = "task_id"),
-            schema = "teachers", catalog = "university-teachers")
+            schema = "teacher", catalog = "university-teacher")
     @Column(name = "task_answers_id")
     private Set<Long> taskAnswersId = new HashSet<>();
 

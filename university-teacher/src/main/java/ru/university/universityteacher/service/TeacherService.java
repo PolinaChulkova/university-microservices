@@ -8,6 +8,7 @@ import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.repo.TeacherRepo;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 
 @Transactional
 @Service
@@ -20,6 +21,12 @@ public class TeacherService {
     public Teacher findTeacherById(Long teacherId) {
         return teacherRepo.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("Преподаватель с id=" + teacherId + "не найден."));
+    }
+
+    public Teacher findTeacherByIdAndSubjectId(Long teacherId, Long subjectId) {
+        return teacherRepo.findByIdAndSubjectId(teacherId, subjectId)
+                .orElseThrow(() -> new RuntimeException("Преподаватель не закреплён за предметом с " +
+                        "id = " + subjectId));
     }
 
     public Teacher findTeacherByEmail(String email) {
@@ -54,5 +61,24 @@ public class TeacherService {
     public void deleteTeacherById(Long teacherId) {
         if (teacherRepo.existsById(teacherId)) teacherRepo.deleteById(teacherId);
         else throw new RuntimeException("Преподавателя с Id=" + teacherId + " не существует!");
+    }
+
+    public void addGroupIdToTeacher(Long teacherId, Long subjectId, Long groupId) {
+        Teacher teacher = findTeacherByIdAndSubjectId(teacherId, subjectId);
+        teacher.getGroupsId().add(groupId);
+        save(teacher);
+    }
+
+    public void save(Teacher teacher) {
+        try {
+            teacherRepo.save(teacher);
+
+        } catch (RuntimeException e) {
+            log.error("Преподаватель " + teacher.getFullName() + " не сохранён! Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            throw new RuntimeException("Преподаватель " + teacher.getFullName() + " не сохранён! Error: "
+                    + Arrays.toString(e.getStackTrace()));
+        }
     }
 }

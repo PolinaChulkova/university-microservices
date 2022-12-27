@@ -9,10 +9,10 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter@Setter
 public class UpdateTaskDTO {
-    private String name;
-    private String description;
-    private Date deadLine;
+    private final String name;
+    private final String description;
+    private final Date deadLine;
 //    потом буду получать из principal
-    private Long teacherId;
+    private final Long teacherId;
 }
 
