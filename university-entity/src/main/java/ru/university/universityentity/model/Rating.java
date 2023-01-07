@@ -1,12 +1,15 @@
 package ru.university.universityentity.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "rating", schema = "student", catalog = "university-student")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -27,8 +30,6 @@ public class Rating {
     private Long subjectId;
     @Column(name = "teacher_id")
     private Long teacherId;
-
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id")
     private Student student;

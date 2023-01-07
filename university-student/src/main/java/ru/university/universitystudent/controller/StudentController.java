@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.StudentDTO;
 import ru.university.universitystudent.service.StudentService;

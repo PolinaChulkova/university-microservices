@@ -28,13 +28,10 @@ public class Student {
     @Column(name = "phone_num")
     private String phoneNum;
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER, cascade =
             {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "group_id")
     private Group group;
-
-    @JsonBackReference
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private List<Rating> rating;
 

@@ -29,6 +29,8 @@ public class TaskService {
     private final FileService fileService;
     private final TeacherService teacherService;
 
+    private final SubjectService subjectService;
+
     public Task createTask(CreateTaskDTO dto) {
         Teacher teacher = teacherService.findTeacherById(dto.getTeacherId());
             if (!teacher.getGroupsId().contains(dto.getGroupId()))
@@ -40,6 +42,7 @@ public class TaskService {
                     dto.getDescription(),
                     dto.getStartLine(),
                     dto.getDeadLine(),
+                    subjectService.findSubjectById(dto.getSubjectId()),
                     dto.getGroupId(),
                     teacher
             );

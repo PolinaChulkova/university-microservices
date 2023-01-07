@@ -52,12 +52,13 @@ public class Task {
     @Column(name = "task_answers_id")
     private Set<Long> taskAnswersId = new HashSet<>();
 
-    public Task(String name, String description, Date startLine, Date deadLine,
+    public Task(String name, String description, Date startLine, Date deadLine, Subject subject,
                 Long groupId, Teacher teacher) {
         this.name = name;
         this.description = description;
         this.startLine = startLine;
         this.deadLine = deadLine;
+        this.subject = subject;
         this.groupId = groupId;
         this.teacher = teacher;
     }

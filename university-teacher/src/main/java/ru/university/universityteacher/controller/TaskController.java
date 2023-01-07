@@ -14,7 +14,7 @@ import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.feign.StudentFeignClient;
 import ru.university.universityteacher.service.TaskService;
 
-import java.util.Objects;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,55 +29,81 @@ public class TaskController {
 //    private final AmqpTemplate template;
 
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<?> getStudentTask(@PathVariable Long studentId) {
-        return ResponseEntity.ok().body(
-                Objects.requireNonNull(studentFeignClient.findStudentById(studentId).getBody()).getGroup()
-                        .getTasksId()
-                        .stream()
-                        .map(taskService::findTaskById)
-                        .collect(Collectors.toList())
-        );
+    public ResponseEntity<?> getStudentTasks(@PathVariable Long studentId) {
+        try {
+            return ResponseEntity.ok().body(
+                    studentFeignClient.findStudentById(studentId).getBody().getGroup()
+                            .getTasksId()
+                            .stream()
+                            .map(taskService::findTaskById)
+                            .collect(Collectors.toList())
+            );
+        } catch (Exception e) {
+            log.error("Нельзя получить задания студента с id = " + studentId
+                    + ". Error: " + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Нельзя получить задания студента."
+                    + " Error: " + Arrays.toString(e.getStackTrace())));
+        }
     }
 
-    @GetMapping("/subject/{subjectId}/{studentId}")
-    public ResponseEntity<?> getAllTaskBySubjectForStudent(@PathVariable Long subjectId,
-                                                           @PathVariable Long studentId) {
+    @GetMapping("/subject")
+    public ResponseEntity<?> getAllTaskBySubjectForStudent(@RequestParam("subjectId") Long subjectId,
+                                                           @RequestParam("studentId") Long studentId) {
         try {
             return ResponseEntity.ok().body(
                     taskService.findTasksBySubjectIdAndGroupId(
                             subjectId,
-                            Objects.requireNonNull(studentFeignClient
-                                            .findStudentById(studentId)
-                                            .getBody())
+                            studentFeignClient.findStudentById(studentId).getBody()
                                     .getGroup().getId()));
 
         } catch (RuntimeException e) {
             log.error("Задания для студента с id = " + subjectId + " по предмету с id = "
                     + subjectId + " не найдены. Error: "
-                    + e.getLocalizedMessage());
+                    + Arrays.toString(e.getStackTrace()));
 
             return ResponseEntity.badRequest().body(new MessageResponse("Задания не найдены. Error: "
-                    + e.getLocalizedMessage()));
+                    + Arrays.toString(e.getStackTrace())));
         }
     }
 
     @GetMapping("/teacher")
     public ResponseEntity<?> getTeacherTask(@RequestParam("taskId") Long taskId,
                                             @RequestParam("teacherId") Long teacherId) {
-        return ResponseEntity.ok().body(taskService.findTaskByIdForTeacher(taskId, teacherId));
+        try {
+            return ResponseEntity.ok().body(taskService.findTaskByIdForTeacher(taskId, teacherId));
+
+        } catch (Exception e) {
+            log.error("Задание с id = " + taskId + " для преподавателя с id = "
+                    + teacherId + " не найдены. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Задание не найдено. Error: "
+                    + Arrays.toString(e.getStackTrace())));
+        }
     }
 
     @GetMapping("/all-for-teacher/{teacherId}/{page}")
     public ResponseEntity<?> getAllTeacherTasks(@PathVariable Long teacherId,
                                                 @PathVariable int page) {
-        Pageable pageable = PageRequest.of(page, 5);
-        return ResponseEntity.ok().body(taskService.findAllTeacherTasks(teacherId, pageable));
+        try {
+            Pageable pageable = PageRequest.of(page, 5);
+            return ResponseEntity.ok().body(taskService.findAllTeacherTasks(teacherId, pageable));
+
+        } catch (Exception e) {
+            log.error("Задания для преподавателя с id = " + teacherId + " не найдены. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Задания не найдены. Error: "
+                    + Arrays.toString(e.getStackTrace())));
+        }
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO dto) {
         try {
             Task task = taskService.createTask(dto);
+            studentFeignClient.addTaskToGroup(dto.getGroupId(), task.getId());
 //            template.convertAndSend("studentQueue", "Создано новое задание по предмету \""
 //                    + task.getName() + "\"");
             return ResponseEntity.ok().body(task);
@@ -145,9 +171,11 @@ public class TaskController {
     }
 
     //    для админа
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
+    @DeleteMapping("/delete-from-groups")
+    public ResponseEntity<?> deleteTask(@RequestParam("taskId") Long taskId,
+                                        @RequestParam("groupId") Long groupId) {
         taskService.deleteTaskById(taskId);
+        studentFeignClient.deleteTaskFromGroup(groupId, taskId);
         return ResponseEntity.ok().body(new MessageResponse("Задание с id=" + taskId + " удалено."));
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityentity.model.Group;
-import ru.university.universityentity.model.Teacher;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.GroupService;
@@ -131,6 +130,36 @@ public class GroupController {
 
             return ResponseEntity.badRequest().body(new MessageResponse("Группа не откреплена от пердмета " +
                     "Error: " + Arrays.toString(e.getStackTrace())));
+        }
+    }
+
+    @PostMapping("/add-task")
+    public ResponseEntity<?> addTaskToGroup(@RequestParam("groupId") Long groupId,
+                                            @RequestParam("taskId") Long taskId) {
+        try {
+            return ResponseEntity.ok().body(groupService.addTaskToGroup(groupId, taskId));
+
+        } catch (Exception e) {
+            log.error("Задание с id = " + taskId + " не добавлено к группе с id = " + groupId
+                    + ". Error: " + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Задание не добавлено к группе" +
+                    ". Error: " + Arrays.toString(e.getStackTrace())));
+        }
+    }
+
+    @PostMapping("/delete-task")
+    public ResponseEntity<?> deleteTaskFromGroup(@RequestParam("groupId") Long groupId,
+                                                 @RequestParam("taskId") Long taskId) {
+        try {
+            return ResponseEntity.ok().body(groupService.deleteTaskFromGroup(groupId, taskId));
+
+        } catch (Exception e) {
+            log.error("Задание с id = " + taskId + " не удалено из спсика заданий группы с id = " + groupId
+                    + ". Error: " + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.badRequest().body(new MessageResponse("Задание не удалено из списка заданий " +
+                    "к группе. Error: " + Arrays.toString(e.getStackTrace())));
         }
     }
 }

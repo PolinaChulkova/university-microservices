@@ -1,6 +1,9 @@
 package ru.university.universityentity.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +16,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "groups", schema = "student", catalog = "university-student")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,7 +29,6 @@ public class Group {
     @Column(name = "group_name", unique = true)
     private String name;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Student> students = new HashSet<>();
 

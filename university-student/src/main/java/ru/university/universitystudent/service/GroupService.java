@@ -10,6 +10,7 @@ import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
 
 import java.util.Arrays;
+import java.util.Set;
 
 
 @Service
@@ -63,6 +64,18 @@ public class GroupService {
         save(group);
     }
 
+    public Set<Long> addTaskToGroup(Long groupId, Long taskId) {
+        Group group = findGroupById(groupId);
+        group.getTasksId().add(taskId);
+        return save(group).getTasksId();
+    }
+
+    public Set<Long> deleteTaskFromGroup(Long groupId, Long taskId) {
+        Group group = findGroupById(groupId);
+        group.getTasksId().remove(taskId);
+        return save(group).getTasksId();
+    }
+
     public void deleteStudentFromGroup(Long groupId, Long studentId) {
         Group group = findGroupById(groupId);
         group.getStudents().remove(studentService.findStudentById(studentId));
@@ -92,9 +105,9 @@ public class GroupService {
                 + groupId + " не найдена."));
     }
 
-    public void save(Group group) {
+    public Group save(Group group) {
         try {
-            groupRepo.save(group);
+            return groupRepo.save(group);
         } catch (RuntimeException e) {
             log.error("Группа " + group.getName() + " не сохранена. " +
                     "Error: " + Arrays.toString(e.getStackTrace()));
