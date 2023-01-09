@@ -1,4 +1,4 @@
-package ru.university.universityutils;
+package ru.university.universityutils.web_client;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
