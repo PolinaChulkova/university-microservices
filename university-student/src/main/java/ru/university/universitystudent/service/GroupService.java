@@ -9,12 +9,14 @@ import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Set;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class GroupService {
 
@@ -64,6 +66,7 @@ public class GroupService {
         save(group);
     }
 
+
     public Set<Long> addTaskToGroup(Long groupId, Long taskId) {
         Group group = findGroupById(groupId);
         group.getTasksId().add(taskId);
@@ -101,7 +104,7 @@ public class GroupService {
     }
 
     public Group findGroupById(Long groupId) {
-        return groupRepo.findById(groupId).orElseThrow(() -> new RuntimeException("Группа с id= "
+        return groupRepo.findById(groupId).orElseThrow(() -> new RuntimeException("Группа с id = "
                 + groupId + " не найдена."));
     }
 

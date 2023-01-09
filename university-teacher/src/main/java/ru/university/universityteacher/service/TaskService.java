@@ -11,8 +11,6 @@ import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.repo.TaskRepo;
-import ru.university.universityutils.StudentWebClientBuilder;
-import ru.university.universityutils.TeacherWebClientBuilder;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
@@ -104,7 +102,7 @@ public class TaskService {
 
     public void deleteTaskById(Long taskId) {
         if (taskRepo.existsById(taskId)) taskRepo.deleteById(taskId);
-        else throw new RuntimeException("Задание с id=" + taskId + "не существует.");
+        else throw new RuntimeException("Задание с id=" + taskId + " не существует.");
     }
 
     public void saveTask(Task task) {

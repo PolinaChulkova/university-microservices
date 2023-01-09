@@ -25,7 +25,11 @@ public class SubjectController {
 
     @GetMapping("/{subjectId}")
     public ResponseEntity<?> getSubject(@PathVariable Long subjectId) {
-        return ResponseEntity.ok().body(subjectService.findSubjectById(subjectId));
+        try {
+            return ResponseEntity.ok().body(subjectService.findSubjectById(subjectId));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/student/all")

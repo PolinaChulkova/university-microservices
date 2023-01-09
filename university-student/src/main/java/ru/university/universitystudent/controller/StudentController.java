@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.StudentDTO;
 import ru.university.universitystudent.service.StudentService;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/student")
@@ -24,7 +25,15 @@ public class StudentController {
 
     @GetMapping("/{studentId}")
     public ResponseEntity<?> findStudentById(@PathVariable Long studentId) {
-        return ResponseEntity.ok().body(studentService.findStudentById(studentId));
+        try {
+            return ResponseEntity.ok().body(studentService.findStudentById(studentId));
+        } catch (Exception e) {
+            log.error("Студент с id = " + studentId + " не найден. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+
+            return ResponseEntity.internalServerError().body("Студент с id = " + studentId + " не найден. Error: "
+                    + Arrays.toString(e.getStackTrace()));
+        }
     }
 
     @PostMapping("/create")
@@ -36,7 +45,7 @@ public class StudentController {
             log.error("Студент с email: " + dto.getEmail() + " не создан. Error: "
                     + e.getLocalizedMessage());
 
-            return ResponseEntity.badRequest().body(new MessageResponse("Студент с email: " + dto.getEmail()
+            return ResponseEntity.internalServerError().body(new MessageResponse("Студент с email: " + dto.getEmail()
                     + " не создан. Error: " + e.getLocalizedMessage()));
         }
     }
@@ -51,7 +60,7 @@ public class StudentController {
             log.error("Студент с Id= " + studentId + " не обновлён. Error: "
                     + e.getLocalizedMessage());
 
-            return ResponseEntity.badRequest().body(new MessageResponse("Студент с email: " + dto.getEmail()
+            return ResponseEntity.internalServerError().body(new MessageResponse("Студент с email: " + dto.getEmail()
                     + " не обновлён. Error: " + e.getLocalizedMessage()));
         }
     }

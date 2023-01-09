@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.service.TeacherService;
@@ -28,12 +29,11 @@ public class TeacherController {
         try {
             return ResponseEntity.ok().body(teacherService.findTeacherById(teacherId));
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Преподаватель с id = " + teacherId + " не найден. Error: "
                     + Arrays.toString(e.getStackTrace()));
 
-            return ResponseEntity.badRequest().body("Преподаватель с id = " + teacherId + " не найден. Error: "
-                    + Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class TeacherController {
             log.error("Преподаватель с email: " + dto.getEmail() + " не создан. Error: "
                     + e.getLocalizedMessage());
 
-            return ResponseEntity.badRequest().body(new MessageResponse("Преподаватель с email: " + dto.getEmail())
+            return ResponseEntity.internalServerError().body(new MessageResponse("Преподаватель с email: " + dto.getEmail())
                     + " не создан. Error: " + e.getLocalizedMessage());
         }
     }
@@ -63,7 +63,7 @@ public class TeacherController {
             log.error("Преподватель с Id= " + teacherId + " не обновлён. {}"
                     + e.getLocalizedMessage());
 
-            return ResponseEntity.badRequest().body(new MessageResponse("Преподаватель с email: "
+            return ResponseEntity.internalServerError().body(new MessageResponse("Преподаватель с email: "
                     + dto.getEmail() + " не обновлён. Error: ") + e.getLocalizedMessage());
         }
     }

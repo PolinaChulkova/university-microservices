@@ -10,8 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.university.universityentity.model.Task;
 import ru.university.universityteacher.dto.CreateTaskDTO;
 import ru.university.universityteacher.dto.MessageResponse;
+import ru.university.universityteacher.dto.TaskNotificationDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.feign.StudentFeignClient;
+import ru.university.universityteacher.mq.MessageProducer;
 import ru.university.universityteacher.service.TaskService;
 
 import java.util.Arrays;
@@ -26,7 +28,7 @@ public class TaskController {
     private final TaskService taskService;
     private final StudentFeignClient studentFeignClient;
 
-//    private final AmqpTemplate template;
+    private final MessageProducer messageProducer;
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentTasks(@PathVariable Long studentId) {
@@ -100,16 +102,20 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO dto) {
+    public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
         try {
-            Task task = taskService.createTask(dto);
-            studentFeignClient.addTaskToGroup(dto.getGroupId(), task.getId());
-//            template.convertAndSend("studentQueue", "Создано новое задание по предмету \""
-//                    + task.getName() + "\"");
+            Task task = taskService.createTask(createTaskDTO);
+//            studentFeignClient.addTaskToGroup(createTaskDTO.getGroupId(), task.getId());
+
+            messageProducer.createNewTaskMessage(new TaskNotificationDTO(
+                    task.getId(),
+                    createTaskDTO.getSubjectId(),
+                    createTaskDTO.getGroupId()));
+
             return ResponseEntity.ok().body(task);
 
         } catch (RuntimeException e) {
-            log.error("Задание " + dto.getName() + " не создано. Error: "
+            log.error("Задание " + createTaskDTO.getName() + " не создано. Error: "
                     + e.getLocalizedMessage());
 
             return ResponseEntity.badRequest().body(new MessageResponse("Задание не создано. Error: "
@@ -176,6 +182,6 @@ public class TaskController {
                                         @RequestParam("groupId") Long groupId) {
         taskService.deleteTaskById(taskId);
         studentFeignClient.deleteTaskFromGroup(groupId, taskId);
-        return ResponseEntity.ok().body(new MessageResponse("Задание с id=" + taskId + " удалено."));
+        return ResponseEntity.ok().body(new MessageResponse("Задание с id = " + taskId + " удалено."));
     }
 }

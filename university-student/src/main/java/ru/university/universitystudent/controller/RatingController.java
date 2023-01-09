@@ -10,7 +10,6 @@ import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.UpdateRatingDTO;
 import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.RatingService;
-import ru.university.universityutils.TeacherWebClientBuilder;
 
 @RestController
 @RequestMapping("/rating")

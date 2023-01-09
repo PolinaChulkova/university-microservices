@@ -15,5 +15,4 @@ public class UniversityStudentApplication {
     public static void main(String[] args) {
         SpringApplication.run(UniversityStudentApplication.class, args);
     }
-
 }

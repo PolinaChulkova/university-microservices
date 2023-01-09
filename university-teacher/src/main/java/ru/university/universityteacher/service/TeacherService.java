@@ -20,7 +20,7 @@ public class TeacherService {
 
     public Teacher findTeacherById(Long teacherId) {
         return teacherRepo.findById(teacherId)
-                .orElseThrow(() -> new RuntimeException("Преподаватель с id=" + teacherId + "не найден."));
+                .orElseThrow(() -> new RuntimeException("Преподаватель с id = " + teacherId + " не найден."));
     }
 
     public Teacher findTeacherByIdAndSubjectId(Long teacherId, Long subjectId) {

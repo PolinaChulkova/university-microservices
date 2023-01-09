@@ -20,7 +20,7 @@ public interface StudentFeignClient {
     ResponseEntity<Set<Long>> addTaskToGroup(@RequestParam("groupId") Long groupId,
                                              @RequestParam("taskId") Long taskId);
     @PostMapping("/group/delete-task")
-    void deleteTaskFromGroup(@RequestParam("groupId") Long groupId,
+    ResponseEntity<?> deleteTaskFromGroup(@RequestParam("groupId") Long groupId,
                              @RequestParam("taskId") Long taskId);
     @PostMapping("/group/add-subject")
     void addSubjectToGroup(@RequestParam("groupId") Long groupId,

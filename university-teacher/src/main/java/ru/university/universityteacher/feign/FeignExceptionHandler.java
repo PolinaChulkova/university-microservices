@@ -1,4 +1,4 @@
-package ru.university.universitystudent.feign;
+package ru.university.universityteacher.feign;
 
 import com.google.common.io.CharStreams;
 import feign.Response;

@@ -9,6 +9,7 @@ import ru.university.universityentity.model.Task;
 import ru.university.universityentity.model.Teacher;
 
 @FeignClient(name = "university-teacher", url = "http://localhost:8765/university-teacher")
+//        fallback = TeacherFeignClientFallback.class)
 public interface TeacherFeignClient {
 
     @GetMapping("/teacher/{teacherId}")
@@ -18,3 +19,17 @@ public interface TeacherFeignClient {
     ResponseEntity<Task> getTeacherTask(@RequestParam("taskId") Long taskId,
                                         @RequestParam("teacherId") Long teacherId);
 }
+
+//@Component
+//class TeacherFeignClientFallback implements TeacherFeignClient {
+//
+//    @Override
+//    public ResponseEntity<Teacher> findTeacherById(Long teacherId) {
+//        return new ResponseEntity<Teacher>(new Teacher(), HttpStatus.NOT_FOUND);
+//    }
+//
+//    @Override
+//    public ResponseEntity<Task> getTeacherTask(Long taskId, Long teacherId) {
+//        throw new ServiceIsUnavailable();
+//    }
+//}
