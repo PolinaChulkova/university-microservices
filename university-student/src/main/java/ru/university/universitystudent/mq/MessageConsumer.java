@@ -14,7 +14,8 @@ public class MessageConsumer {
     private final GroupService groupService;
 
     @StreamListener(target = UniversityBinding.INPUT_CHANNEL)
-    public void addNewTaskInGroup(TaskNotificationDTO taskNotificationDTO) {
-        groupService.addTaskToGroup(taskNotificationDTO.getGroupId(), taskNotificationDTO.getTaskId());
+    public void addNewTaskInGroup(TaskNotificationDTO taskNotificationDTO) throws Exception {
+//        groupService.addTaskToGroup(taskNotificationDTO.getGroupId(), taskNotificationDTO.getTaskId());
+        throw new Exception("test dlq");
     }
 }
