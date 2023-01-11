@@ -13,7 +13,7 @@ import ru.university.universityteacher.dto.MessageResponse;
 import ru.university.universityteacher.dto.TaskNotificationDTO;
 import ru.university.universityteacher.dto.UpdateTaskDTO;
 import ru.university.universityteacher.feign.StudentFeignClient;
-import ru.university.universityteacher.mq.MessageProducer;
+import ru.university.universityteacher.mq.func.MessageService;
 import ru.university.universityteacher.service.TaskService;
 
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class TaskController {
     private final TaskService taskService;
     private final StudentFeignClient studentFeignClient;
 
-    private final MessageProducer messageProducer;
+    private final MessageService messageService;
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentTasks(@PathVariable Long studentId) {
@@ -107,7 +107,7 @@ public class TaskController {
             Task task = taskService.createTask(createTaskDTO);
 //            studentFeignClient.addTaskToGroup(createTaskDTO.getGroupId(), task.getId());
 
-            messageProducer.createNewTaskMessage(new TaskNotificationDTO(
+            messageService.createNewTaskMessage(new TaskNotificationDTO(
                     task.getId(),
                     createTaskDTO.getSubjectId(),
                     createTaskDTO.getGroupId()));
