@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityentity.model.Rating;
 import ru.university.universitystudent.dto.CreateRatingDTO;
-import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.UpdateRatingDTO;
 import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.RatingService;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/rating")
@@ -19,45 +19,29 @@ public class RatingController {
 
     private final RatingService ratingService;
     private final TeacherFeignClient teacherFeignClient;
-//    private final AmqpTemplate amqpTemplate;
 
     @PostMapping("/create")
     public ResponseEntity<?> createRating(@RequestBody CreateRatingDTO dto) {
-        try {
-            if(teacherFeignClient.getTeacherTask(
-                    dto.getTaskId(), dto.getTeacherId()).getBody() == null)
-                throw new RuntimeException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
-                        + ", т.к. он закреплен за другим преподавателем");
 
-            Rating rating = ratingService.createRating(dto);
-//            amqpTemplate.convertAndSend("studentQueue", "Выставлена оценка по предмету \""
-//                    + rating.getSubject().getSubjectName() + "\"");
-            return ResponseEntity.ok().body(rating);
+        if (teacherFeignClient.getTeacherTask(
+                dto.getTaskId(), dto.getTeacherId()).getBody() == null)
+            throw new EntityNotFoundException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
+                    + ", т.к. он закреплен за другим преподавателем.");
 
-        } catch (RuntimeException e) {
-            log.error("Оценка студенту с id= " + dto.getStudentId() + " не выставлена. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.badRequest().body(new MessageResponse("Оценка не выставлена. " +
-                    "Error: " + e.getLocalizedMessage()));
-        }
+        Rating rating = ratingService.createRating(dto);
+        return ResponseEntity.ok().body(rating);
     }
 
     @PutMapping("/update/{ratingId}/{teacherId}")
     public ResponseEntity<?> updateRating(@PathVariable Long ratingId,
                                           @PathVariable Long teacherId,
                                           @RequestBody UpdateRatingDTO dto) {
-        try {
-            ratingService.updateRating(ratingId, teacherId, dto);
-            return ResponseEntity.ok().body(new MessageResponse("Оценка обновлена"));
+        return ResponseEntity.ok().body(ratingService.updateRating(ratingId, teacherId, dto));
+    }
 
-        } catch (RuntimeException e) {
-            log.error("Оценка с id= " + ratingId + " не обновлена. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.badRequest().body(new MessageResponse("Оценка не обновлена. " +
-                    "Error: " + e.getLocalizedMessage()));
-        }
+    @GetMapping("/{ratingId}")
+    public ResponseEntity<?> findRatingById(@PathVariable Long ratingId) {
+        return ResponseEntity.ok().body(ratingService.findRatingById(ratingId));
     }
 
     @GetMapping("/student/{taskId}/{studentId}")

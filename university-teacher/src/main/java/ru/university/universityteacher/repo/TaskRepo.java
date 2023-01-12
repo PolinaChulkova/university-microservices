@@ -28,6 +28,4 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
     Optional<Task> findById(Long id);
 
     boolean existsById(Long id);
-
-    void deleteById(Long id);
 }

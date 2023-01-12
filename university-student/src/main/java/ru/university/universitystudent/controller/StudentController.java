@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.dto.StudentDTO;
 import ru.university.universitystudent.service.StudentService;
-
-import java.util.Arrays;
 
 @RestController
 @RequestMapping("/student")
@@ -18,56 +15,24 @@ public class StudentController {
 
     private final StudentService studentService;
 
-//    @RabbitListener(queues = "studentQueue")
-//    public void notificationListener(String message) {
-//        log.info("Студент получил сообщение: " + message);
-//    }
-
     @GetMapping("/{studentId}")
     public ResponseEntity<?> findStudentById(@PathVariable Long studentId) {
-        try {
-            return ResponseEntity.ok().body(studentService.findStudentById(studentId));
-        } catch (Exception e) {
-            log.error("Студент с id = " + studentId + " не найден. Error: "
-                    + Arrays.toString(e.getStackTrace()));
-
-            return ResponseEntity.internalServerError().body("Студент с id = " + studentId + " не найден. Error: "
-                    + Arrays.toString(e.getStackTrace()));
-        }
+        return ResponseEntity.ok().body(studentService.findStudentById(studentId));
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createStudent(@RequestBody StudentDTO dto) {
-        try {
-            return ResponseEntity.ok().body(studentService.createStudent(dto));
-
-        } catch (RuntimeException e) {
-            log.error("Студент с email: " + dto.getEmail() + " не создан. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Студент с email: " + dto.getEmail()
-                    + " не создан. Error: " + e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok().body(studentService.createStudent(dto));
     }
 
     @PutMapping("/update/{studentId}")
     public ResponseEntity<?> updateStudent(@PathVariable Long studentId,
                                            @RequestBody StudentDTO dto) {
-        try {
-            return ResponseEntity.ok().body(studentService.updateStudent(studentId, dto));
-
-        } catch (RuntimeException e) {
-            log.error("Студент с Id= " + studentId + " не обновлён. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Студент с email: " + dto.getEmail()
-                    + " не обновлён. Error: " + e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok().body(studentService.updateStudent(studentId, dto));
     }
 
     @DeleteMapping("/{studentId}")
-    public ResponseEntity<?> deleteStudentById(@PathVariable Long studentId) {
+    public void deleteStudentById(@PathVariable Long studentId) {
         studentService.deleteStudentById(studentId);
-        return ResponseEntity.ok().body(new MessageResponse("Студент с id=" + studentId + " удалён."));
     }
 }

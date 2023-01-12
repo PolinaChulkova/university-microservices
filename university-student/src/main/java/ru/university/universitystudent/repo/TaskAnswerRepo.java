@@ -16,6 +16,8 @@ public interface TaskAnswerRepo extends JpaRepository<TaskAnswer, Long> {
 
     Optional<TaskAnswer> findByTaskIdAndStudentId(Long taskId, Long studentId);
 
+    Optional<TaskAnswer> deleteByIdAndStudentId(Long id, Long studentId);
+
     boolean existsByIdAndStudentId(Long id, Long studentId);
 
     void deleteById(Long id);

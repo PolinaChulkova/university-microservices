@@ -6,32 +6,26 @@ import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.dto.TeacherDTO;
 import ru.university.universityteacher.repo.TeacherRepo;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
 
 @Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TeacherService {
-
     private final TeacherRepo teacherRepo;
 
     public Teacher findTeacherById(Long teacherId) {
         return teacherRepo.findById(teacherId)
-                .orElseThrow(() -> new RuntimeException("Преподаватель с id = " + teacherId + " не найден."));
+                .orElseThrow(() -> new EntityNotFoundException("Преподаватель с id = " + teacherId + " не найден!"));
     }
 
     public Teacher findTeacherByIdAndSubjectId(Long teacherId, Long subjectId) {
         return teacherRepo.findByIdAndSubjectId(teacherId, subjectId)
-                .orElseThrow(() -> new RuntimeException("Преподаватель не закреплён за предметом с " +
-                        "id = " + subjectId));
-    }
-
-    public Teacher findTeacherByEmail(String email) {
-        return teacherRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Преподаватель с email: " + email + "не найден."));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Преподаватель с id = {} не закреплён за предметом " +
+                        "с id = {}.", teacherId,  subjectId)));
     }
 
     public Teacher createTeacher(TeacherDTO dto) {
@@ -60,7 +54,7 @@ public class TeacherService {
 
     public void deleteTeacherById(Long teacherId) {
         if (teacherRepo.existsById(teacherId)) teacherRepo.deleteById(teacherId);
-        else throw new RuntimeException("Преподавателя с Id=" + teacherId + " не существует!");
+        else throw new EntityNotFoundException("Преподавателя с id = " + teacherId + " не существует!");
     }
 
     public void addGroupIdToTeacher(Long teacherId, Long subjectId, Long groupId) {
@@ -70,15 +64,6 @@ public class TeacherService {
     }
 
     public void save(Teacher teacher) {
-        try {
-            teacherRepo.save(teacher);
-
-        } catch (RuntimeException e) {
-            log.error("Преподаватель " + teacher.getFullName() + " не сохранён! Error: "
-                    + Arrays.toString(e.getStackTrace()));
-
-            throw new RuntimeException("Преподаватель " + teacher.getFullName() + " не сохранён! Error: "
-                    + Arrays.toString(e.getStackTrace()));
-        }
+        teacherRepo.save(teacher);
     }
 }

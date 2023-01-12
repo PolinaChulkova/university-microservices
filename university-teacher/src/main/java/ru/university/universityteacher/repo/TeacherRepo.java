@@ -17,7 +17,9 @@ public interface TeacherRepo extends JpaRepository<Teacher, Long> {
     @Query(value = "SELECT t FROM Teacher t JOIN t.subjects s WHERE t.id = ?1 AND s.id = ?2")
     Optional<Teacher> findByIdAndSubjectId(Long teacherId, Long subjectId);
 
-    Optional<Teacher> findByEmail(String email);
+//    @Transactional
+//    @Query(value = "SELECT t FROM Teacher t JOIN t.groupsId g WHERE t.id = ?1 AND g.")
+//    Optional<Teacher> findTeacherByIdAndGroupId(Long teacherId, Long groupId);
 
     Optional<Teacher> findById(Long id);
 

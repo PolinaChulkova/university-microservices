@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
+import ru.university.universityutils.exceptions.custom_exception.RestRuntimeException;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
@@ -26,44 +28,32 @@ public class GroupService {
     public Page<Group> findAllGroups(Pageable pageable) {
         return groupRepo.findAll(pageable);
     }
-//
-//    public Page<Group> findTeacherGroups(Long teacherId, Pageable pageable) {
-//        List<Group> groups = teacherService.findTeacherById(teacherId)
-//                .getGroupsId().stream().map(this::findGroupById).collect(Collectors.toList());
-//
-//        return new PageImpl<>(groups, pageable, groups.size());
-//    }
 
     public Group createGroup(String groupName) {
         Group group = new Group(groupName);
-//
-//        for (Student student : students) {
-//            student.setGroup(group);
-//            studentService.save(student);
-//        }
         groupRepo.save(group);
         return group;
     }
 
-    public void addStudentToGroup(Long groupId, Long studentId) {
+    public Set<Student> addStudentToGroup(Long groupId, Long studentId) {
         Group group = findGroupById(groupId);
         Student student = studentService.findStudentById(studentId);
         group.getStudents().add(student);
         student.setGroup(group);
         studentService.save(student);
-        groupRepo.save(group);
+        return groupRepo.save(group).getStudents();
     }
 
-    public void addSubjectIdToGroup(Long subjectId, Long groupId) {
+    public Set<Long> addSubjectIdToGroup(Long subjectId, Long groupId) {
         Group group = findGroupById(groupId);
         group.getSubjectsId().add(subjectId);
-        save(group);
+        return save(group).getSubjectsId();
     }
 
-    public void detachSubjectIdFromGroup(Long subjectId, Long groupId) {
+    public Set<Long> detachSubjectIdFromGroup(Long subjectId, Long groupId) {
         Group group = findGroupById(groupId);
         group.getSubjectsId().remove(subjectId);
-        save(group);
+        return save(group).getSubjectsId();
     }
 
 
@@ -79,44 +69,23 @@ public class GroupService {
         return save(group).getTasksId();
     }
 
-    public void deleteStudentFromGroup(Long groupId, Long studentId) {
+    public Set<Student> deleteStudentFromGroup(Long groupId, Long studentId) {
         Group group = findGroupById(groupId);
         group.getStudents().remove(studentService.findStudentById(studentId));
-        groupRepo.save(group);
-    }
-
-    public Group findGroupByGroupName(String groupName) {
-        return groupRepo.findByName(groupName)
-                .orElseThrow(() -> new RuntimeException("Группа с именем "
-                        + groupName + " не найдена."));
-    }
-
-    public void deleteGroupByGroupName(String groupName) {
-        if (groupRepo.existsByName(groupName)) groupRepo.deleteByName(groupName);
-        else throw new RuntimeException("Нельзя совершить удаление! " +
-                "Группа с именем " + groupName + " не существует.");
+        return groupRepo.save(group).getStudents();
     }
 
     public void deleteGroupById(Long groupId) {
         if (groupRepo.existsById(groupId)) groupRepo.deleteById(groupId);
-        else throw new RuntimeException("Нельзя совершить удаление! " +
-                "Группа с id= " + groupId + " не существует.");
+        else throw new EntityNotFoundException("Группа с id= " + groupId + " не найдена!");
     }
 
     public Group findGroupById(Long groupId) {
-        return groupRepo.findById(groupId).orElseThrow(() -> new RuntimeException("Группа с id = "
-                + groupId + " не найдена."));
+        return groupRepo.findById(groupId).orElseThrow(() -> new EntityNotFoundException("Группа с id = "
+                + groupId + " не найдена!"));
     }
 
     public Group save(Group group) {
-        try {
             return groupRepo.save(group);
-        } catch (RuntimeException e) {
-            log.error("Группа " + group.getName() + " не сохранена. " +
-                    "Error: " + Arrays.toString(e.getStackTrace()));
-
-            throw new RuntimeException("Группа " + group.getName() + " не сохранена. " +
-                    "Error: " + Arrays.toString(e.getStackTrace()));
-        }
     }
 }

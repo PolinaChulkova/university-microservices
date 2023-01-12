@@ -8,15 +8,16 @@ import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Subject;
 import ru.university.universityentity.model.Teacher;
 import ru.university.universityteacher.repo.SubjectRepo;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
 import javax.transaction.Transactional;
+import java.util.Set;
 
 @Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SubjectService {
-
     private final SubjectRepo subjectRepo;
     private final TeacherService teacherService;
 
@@ -38,47 +39,41 @@ public class SubjectService {
         return subject;
     }
 
-    public Subject addGroupIdToSubject(Long groupId, Long subjectId) {
+    public Set<Long> addGroupIdToSubject(Long groupId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
         subject.getGroupsId().add(groupId);
-        subjectRepo.save(subject);
-
-        return subject;
+        return subjectRepo.save(subject).getGroupsId();
     }
 
-    public void addTeacherToSubject(Long teacherId, Long subjectId) {
+    public Set<Teacher> addTeacherToSubject(Long teacherId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
         Teacher teacher = teacherService.findTeacherById(teacherId);
         subject.getTeachers().add(teacher);
-        subjectRepo.save(subject);
+        return subjectRepo.save(subject).getTeachers();
     }
 
-    public void detachTeacherFromSubject(Long teacherId, Long subjectId) {
+    public Set<Teacher> detachTeacherFromSubject(Long teacherId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
         subject.getTeachers().remove(teacherService.findTeacherById(teacherId));
-        subjectRepo.save(subject);
+        return subjectRepo.save(subject).getTeachers();
     }
 
-    public void detachGroupFromSubject(Long groupId, Long subjectId) {
+    public Set<Long> detachGroupFromSubject(Long groupId, Long subjectId) {
         Subject subject = findSubjectById(subjectId);
         subject.getGroupsId().remove(groupId);
-        subjectRepo.save(subject);
-    }
-
-    public Subject findSubjectByName(String name) {
-        return subjectRepo.findBySubjectName(name)
-                .orElseThrow(() -> new RuntimeException("Не удалось найти предмет с именем "
-                        + name + "."));
+        return subjectRepo.save(subject).getGroupsId();
     }
 
     public void deleteSubjectById(Long subjectId) {
-        if (subjectRepo.existsById(subjectId)) subjectRepo.deleteById(subjectId);
-        else throw new RuntimeException("Нельзя совершить удаление! " +
-                "Предмет с id=" + subjectId + " не существует.");
+        if (subjectRepo.existsById(subjectId))
+            subjectRepo.deleteById(subjectId);
+
+        else throw new EntityNotFoundException("Нельзя совершить удаление! " +
+                "Предмет с id = " + subjectId + " не существует.");
     }
 
     public Subject findSubjectById(Long subjectId) {
         return subjectRepo.findById(subjectId)
-                .orElseThrow(() -> new RuntimeException("Предмет с id=" + subjectId + "не найден."));
+                .orElseThrow(() -> new EntityNotFoundException("Предмет с id=" + subjectId + "не найден."));
     }
 }

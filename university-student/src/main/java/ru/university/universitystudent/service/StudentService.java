@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.dto.StudentDTO;
 import ru.university.universitystudent.repo.StudentRepo;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -15,47 +16,37 @@ public class StudentService {
     private final StudentRepo studentRepo;
 
     public Student createStudent(StudentDTO dto) {
-            Student student = new Student(
-                    dto.getFullName(),
-                    dto.getEmail(),
-                    dto.getPassword(),
-                    dto.getPhoneNum()
-            );
-            studentRepo.save(student);
-            return student;
+        Student student = new Student(
+                dto.getFullName(),
+                dto.getEmail(),
+                dto.getPassword(),
+                dto.getPhoneNum()
+        );
+        studentRepo.save(student);
+        return student;
     }
 
     public Student updateStudent(Long studentId, StudentDTO dto) {
-            Student student = findStudentById(studentId);
-            student.setFullName(dto.getFullName());
-            student.setEmail(dto.getEmail());
-            student.setPassword(dto.getPassword());
-            student.setPhoneNum(dto.getPhoneNum());
-            studentRepo.save(student);
-            return student;
-    }
-
-    public Student findStudentByEmail(String studentEmail) {
-        return studentRepo.findByEmail(studentEmail).orElseThrow(()
-                -> new RuntimeException("Не удалось найти студента с email: " + studentEmail + "."));
+        Student student = findStudentById(studentId);
+        student.setFullName(dto.getFullName());
+        student.setEmail(dto.getEmail());
+        student.setPassword(dto.getPassword());
+        student.setPhoneNum(dto.getPhoneNum());
+        studentRepo.save(student);
+        return student;
     }
 
     public void deleteStudentById(Long studentId) {
         if (studentRepo.existsById(studentId)) studentRepo.deleteById(studentId);
-        else throw new RuntimeException("Студента с Id=" + studentId + " не существует!");
+        else throw new EntityNotFoundException("Студент с id = " + studentId + " не найден!");
     }
 
-    public Student findStudentById(Long id) {
-        return studentRepo.findById(id).orElseThrow(() -> new RuntimeException("Не удалось найти студента с Id="
-                + id + "."));
+    public Student findStudentById(Long studentId) {
+        return studentRepo.findById(studentId).orElseThrow(() ->
+                new EntityNotFoundException("Студент с id = " + studentId + " не найден!"));
     }
 
     public void save(Student student) {
-        try {
-            studentRepo.save(student);
-        } catch (RuntimeException e) {
-            log.error("Студент " + student.getFullName() + " не сохранен. " +
-                    "Error: " + e.getLocalizedMessage());
-        }
+        studentRepo.save(student);
     }
 }

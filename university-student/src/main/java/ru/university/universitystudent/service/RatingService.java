@@ -7,6 +7,7 @@ import ru.university.universityentity.model.Rating;
 import ru.university.universitystudent.dto.CreateRatingDTO;
 import ru.university.universitystudent.dto.UpdateRatingDTO;
 import ru.university.universitystudent.repo.RatingRepo;
+import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
 import java.util.List;
 
@@ -19,10 +20,6 @@ public class RatingService {
     private final StudentService studentService;
 
     public Rating createRating(CreateRatingDTO dto) {
-//        if (taskService.findTaskByIdForTeacher(dto.getTaskId(), dto.getTeacherId()) == null)
-//            throw new RuntimeException("Невозможно поставить оценку студенту с id=" + dto.getStudentId()
-//                    + ", т.к. он закреплен за другим преподавателем");
-
         Rating rating = new Rating(
                 dto.getMark(),
                 dto.getComment(),
@@ -36,22 +33,22 @@ public class RatingService {
         return rating;
     }
 
-    public void updateRating(Long ratingId, Long teacherId, UpdateRatingDTO dto) {
+    public Rating updateRating(Long ratingId, Long teacherId, UpdateRatingDTO dto) {
         Rating rating = findRatingForTeacher(ratingId, teacherId);
         rating.setComment(dto.getComment());
         rating.setMark(dto.getMark());
 
-        ratingRepo.save(rating);
+        return ratingRepo.save(rating);
     }
 
     public Rating findRatingForStudent(Long taskId, Long studentId) {
         return ratingRepo.findByTaskIdAndStudentId(taskId, studentId).orElseThrow(()
-                -> new RuntimeException("Оценка по заданию с id=" + taskId + " не найдена."));
+                -> new EntityNotFoundException("Оценка по заданию с id = " + taskId + " не найдена!"));
     }
 
     public Rating findRatingForTeacher(Long ratingId, Long teacherId) {
         return ratingRepo.findByIdAndTeacherId(ratingId, teacherId).orElseThrow(() ->
-                new RuntimeException("Оценка с id=" + ratingId + " не найдена"));
+                new EntityNotFoundException("Оценка с id = " + ratingId + " не найдена!"));
     }
 
     public List<Rating> findRatingsForTeacher(Long taskId, Long teacherId) {
@@ -64,6 +61,6 @@ public class RatingService {
 
     public Rating findRatingById(Long ratingId) {
         return ratingRepo.findById(ratingId).orElseThrow(() ->
-                new RuntimeException("Рейтинг с id=" + ratingId + " не найден."));
+                new EntityNotFoundException("Оценка с id = " + ratingId + " не найден!"));
     }
 }

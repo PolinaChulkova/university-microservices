@@ -1,4 +1,4 @@
-package ru.university.universityteacher.feign;
+package ru.university.universityutils.exceptions;
 
 import com.google.common.io.CharStreams;
 import feign.Response;
@@ -14,23 +14,24 @@ import java.nio.charset.Charset;
 @Component
 public class FeignExceptionHandler implements ErrorDecoder {
 
+    private final ErrorDecoder.Default defaultDecoder = new Default();
+
     @Override
     public Exception decode(String methodKey, Response response) {
         switch (response.status()) {
-            case 404 : {
-                return new ResponseStatusException(HttpStatus.NOT_FOUND, "Сервер недоступен, попробуйте позже: "
-                        + readBody(response));
+            case 404: {
+                return new ResponseStatusException(HttpStatus.NOT_FOUND, readBody(response));
             }
-            case 500 : {
+            case 500: {
                 return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, readBody(response));
             }
         }
-        return new Exception(readBody(response));
+        return defaultDecoder.decode(methodKey, response);
     }
 
     private String readBody(Response response) {
         String message = null;
-        try (Reader reader = response.body().asReader(Charset.defaultCharset())) {
+        try (Reader reader = response.body().asReader()) {
 
             message = CharStreams.toString(reader);
 

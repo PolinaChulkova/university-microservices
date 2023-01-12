@@ -9,13 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Teacher;
-import ru.university.universitystudent.dto.MessageResponse;
 import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.GroupService;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,11 +26,14 @@ public class GroupController {
 
     @GetMapping("/{groupId}")
     public ResponseEntity<?> getGroup(@PathVariable Long groupId) {
-        try {
-            return ResponseEntity.ok().body(groupService.findGroupById(groupId));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return ResponseEntity.ok().body(groupService.findGroupById(groupId));
+    }
+
+    @GetMapping("/find-all")
+    public ResponseEntity<?> getAllGroups(@RequestParam(value = "page", required = false, defaultValue = "0")
+                                          int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return ResponseEntity.ok().body(groupService.findAllGroups(pageable).getContent());
     }
 
     @GetMapping("/groups")
@@ -42,15 +42,15 @@ public class GroupController {
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
 
-            Pageable pageable = PageRequest.of(page, size);
-            ResponseEntity<Teacher> teacherResponse = teacherFeignClient.findTeacherById(teacherId);
+        Pageable pageable = PageRequest.of(page, size);
+        ResponseEntity<Teacher> teacherResponse = teacherFeignClient.findTeacherById(teacherId);
 
-            List<Group> groups = teacherResponse.getBody()
-                    .getGroupsId()
-                    .stream()
-                    .map(groupService::findGroupById)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok().body(new PageImpl<Group>(groups, pageable, size).getContent());
+        List<Group> groups = teacherResponse.getBody()
+                .getGroupsId()
+                .stream()
+                .map(groupService::findGroupById)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(new PageImpl<Group>(groups, pageable, size).getContent());
     }
 
     @GetMapping("/students/{groupId}")
@@ -61,50 +61,27 @@ public class GroupController {
     //    для админа
     @PostMapping("/create")
     public ResponseEntity<?> createGroup(@RequestBody String groupName) {
-        try {
-            return ResponseEntity.ok().body(groupService.createGroup(groupName));
-
-        } catch (RuntimeException e) {
-            log.error("Группа с названием  " + groupName + " не создана. Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Группа не создана. Error: "
-                    + e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok().body(groupService.createGroup(groupName));
     }
 
     //    для админа
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<?> deleteGroup(@PathVariable Long groupId) {
+    public void deleteGroup(@PathVariable Long groupId) {
         groupService.deleteGroupById(groupId);
-        return ResponseEntity.ok().body(new MessageResponse("Группа с " + groupId + " удалена."));
     }
 
     //    для админа
     @PostMapping("/add-student")
     public ResponseEntity<?> addStudentToGroup(@RequestParam("groupId") Long groupId,
                                                @RequestParam("studentId") Long studentId) {
-        try {
-            groupService.addStudentToGroup(groupId, studentId);
-            return ResponseEntity.ok().body(new MessageResponse("В группу с id=" + groupId
-                    + " добавлен студент с id=" + studentId));
-
-        } catch (RuntimeException e) {
-            log.error("Студент с id= " + studentId + " не добавлен в группу с id=" + groupId + ". Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Студент не добавлен в группу. " +
-                    "Error: " + e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok().body(groupService.addStudentToGroup(groupId, studentId));
     }
 
     //    для админа
     @PostMapping("/delete-student")
     public ResponseEntity<?> deleteStudentFromGroup(@RequestParam("groupId") Long groupId,
                                                     @RequestParam("studentId") Long studentId) {
-        groupService.deleteStudentFromGroup(groupId, studentId);
-        return ResponseEntity.ok().body(new MessageResponse("Из группы с id=" + groupId
-                + " удалён студент с id=" + studentId));
+        return ResponseEntity.ok().body(groupService.deleteStudentFromGroup(groupId, studentId));
     }
 
     //    для админа
@@ -112,62 +89,24 @@ public class GroupController {
     @PostMapping("/add-subject")
     public ResponseEntity<?> addSubjectToGroup(@RequestParam("groupId") Long groupId,
                                                @RequestParam("subjectId") Long subjectId) {
-        try {
-            groupService.addSubjectIdToGroup(subjectId, groupId);
-            return ResponseEntity.ok().body(new MessageResponse("Предмет добавлен к группе"));
-
-        } catch (RuntimeException e) {
-            log.error("Предмет с id = " + subjectId + " не добавлен к группе с id=" + groupId + ". Error: "
-                    + e.getLocalizedMessage());
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Предмет не добавлен к группе. " +
-                    "Error: " + e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok().body(groupService.addSubjectIdToGroup(subjectId, groupId));
     }
 
     @PostMapping("/detach-subject")
     public ResponseEntity<?> detachSubjectFromGroup(@RequestParam("groupId") Long groupId,
                                                     @RequestParam("subjectId") Long subjectId) {
-        try {
-            groupService.detachSubjectIdFromGroup(subjectId, groupId);
-            return ResponseEntity.ok().body(new MessageResponse("Группа откреплена от предмета"));
-
-        } catch (RuntimeException e) {
-            log.error("Группа с id = " + groupId + " не откреплена от предмета с id=" + subjectId + ". Error: "
-                    + Arrays.toString(e.getStackTrace()));
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Группа не откреплена от пердмета " +
-                    "Error: " + Arrays.toString(e.getStackTrace())));
-        }
+        return ResponseEntity.ok().body(groupService.detachSubjectIdFromGroup(subjectId, groupId));
     }
 
     @PostMapping("/add-task")
     public ResponseEntity<?> addTaskToGroup(@RequestParam("groupId") Long groupId,
                                             @RequestParam("taskId") Long taskId) {
-        try {
-            return ResponseEntity.ok().body(groupService.addTaskToGroup(groupId, taskId));
-
-        } catch (Exception e) {
-            log.error("Задание с id = " + taskId + " не добавлено к группе с id = " + groupId
-                    + ". Error: " + Arrays.toString(e.getStackTrace()));
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Задание не добавлено к группе" +
-                    ". Error: " + Arrays.toString(e.getStackTrace())));
-        }
+        return ResponseEntity.ok().body(groupService.addTaskToGroup(groupId, taskId));
     }
 
     @PostMapping("/delete-task")
     public ResponseEntity<?> deleteTaskFromGroup(@RequestParam("groupId") Long groupId,
                                                  @RequestParam("taskId") Long taskId) {
-        try {
-            return ResponseEntity.ok().body(groupService.deleteTaskFromGroup(groupId, taskId));
-
-        } catch (Exception e) {
-            log.error("Задание с id = " + taskId + " не удалено из списка заданий группы с id = " + groupId
-                    + ". Error: " + Arrays.toString(e.getStackTrace()));
-
-            return ResponseEntity.internalServerError().body(new MessageResponse("Задание не удалено из списка заданий " +
-                    "к группе. Error: " + Arrays.toString(e.getStackTrace())));
-        }
+        return ResponseEntity.ok().body(groupService.deleteTaskFromGroup(groupId, taskId));
     }
 }

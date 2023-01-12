@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/university-entity.main.iml" filepath="$PROJECT_DIR$/.idea/modules/university-entity.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/university-student.main.iml" filepath="$PROJECT_DIR$/.idea/modules/university-student.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/university-teacher.main.iml" filepath="$PROJECT_DIR$/.idea/modules/university-teacher.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/university-utils.main.iml" filepath="$PROJECT_DIR$/.idea/modules/university-utils.main.iml" />
     </modules>
   </component>
 </project>
