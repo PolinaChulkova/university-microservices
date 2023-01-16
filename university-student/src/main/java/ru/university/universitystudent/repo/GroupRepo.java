@@ -18,10 +18,4 @@ public interface GroupRepo extends JpaRepository<Group, Long> {
     boolean existsById(Long id);
 
     void deleteById(Long id);
-
-    void deleteByName(String name);
-
-    Optional<Group> findByName(String name);
-
-    boolean existsByName(String name);
 }

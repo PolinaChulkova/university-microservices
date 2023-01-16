@@ -9,10 +9,8 @@ import ru.university.universityentity.model.Group;
 import ru.university.universityentity.model.Student;
 import ru.university.universitystudent.repo.GroupRepo;
 import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
-import ru.university.universityutils.exceptions.custom_exception.RestRuntimeException;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
 import java.util.Set;
 
 
@@ -77,7 +75,7 @@ public class GroupService {
 
     public void deleteGroupById(Long groupId) {
         if (groupRepo.existsById(groupId)) groupRepo.deleteById(groupId);
-        else throw new EntityNotFoundException("Группа с id= " + groupId + " не найдена!");
+        else throw new EntityNotFoundException("Группа с id = " + groupId + " не найдена!");
     }
 
     public Group findGroupById(Long groupId) {

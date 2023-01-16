@@ -6,12 +6,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "subject", schema = "teacher", catalog = "university-teacher")
 @Getter@Setter
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Subject {
@@ -37,5 +37,18 @@ public class Subject {
 
     public Subject(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subject subject = (Subject) o;
+        return Objects.equals(id, subject.id) && Objects.equals(subjectName, subject.subjectName) && Objects.equals(groupsId, subject.groupsId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, subjectName, groupsId);
     }
 }

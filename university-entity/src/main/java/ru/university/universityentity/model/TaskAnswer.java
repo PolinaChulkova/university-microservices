@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
+@Entity(name = "TaskAnswer")
 @Table(name = "task_answer", schema = "student", catalog = "university-student")
 @Getter@Setter
 @NoArgsConstructor
@@ -28,8 +28,8 @@ public class TaskAnswer {
     @ElementCollection
     @CollectionTable(name = "answers_files", joinColumns = @JoinColumn(name = "task_answer_id"),
             schema = "student", catalog = "university-student")
-    @Column(name = "file_uri")
-    private Set<String> filesUri;
+    @Column(name = "filename")
+    private Set<String> filenames;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id")

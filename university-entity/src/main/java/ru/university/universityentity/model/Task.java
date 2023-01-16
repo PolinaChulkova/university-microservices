@@ -39,8 +39,8 @@ public class Task {
     @ElementCollection
     @CollectionTable(name = "tasks_files", joinColumns = @JoinColumn(name = "task_id"),
             schema = "teacher", catalog = "university-teacher")
-    @Column(name = "file_uri")
-    private Set<String> filesUri = new HashSet<>();
+    @Column(name = "filename")
+    private Set<String> filenames = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")

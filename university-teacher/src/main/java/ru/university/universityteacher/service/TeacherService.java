@@ -24,8 +24,8 @@ public class TeacherService {
 
     public Teacher findTeacherByIdAndSubjectId(Long teacherId, Long subjectId) {
         return teacherRepo.findByIdAndSubjectId(teacherId, subjectId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Преподаватель с id = {} не закреплён за предметом " +
-                        "с id = {}.", teacherId,  subjectId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Преподаватель с id = %s не закреплён за предметом " +
+                        "с id = %s.", teacherId,  subjectId)));
     }
 
     public Teacher createTeacher(TeacherDTO dto) {

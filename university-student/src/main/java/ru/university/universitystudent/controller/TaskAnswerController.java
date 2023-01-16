@@ -5,10 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.university.universityentity.model.TaskAnswer;
 import ru.university.universitystudent.dto.CreateTaskAnswerDTO;
 import ru.university.universitystudent.feign.TeacherFeignClient;
 import ru.university.universitystudent.service.TaskAnswerService;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,33 +24,40 @@ public class TaskAnswerController {
     private final TaskAnswerService taskAnswerService;
     private final TeacherFeignClient teacherFeignClient;
 
-    @GetMapping("/for-student/{studentId}/{taskId}")
-    public ResponseEntity<?> getTaskAnswerForStudent(@PathVariable Long studentId,
-                                                     @PathVariable Long taskId) {
+    @GetMapping("/for-student")
+    public ResponseEntity<?> getTaskAnswerForStudent(@RequestParam("studentId") Long studentId,
+                                                     @RequestParam("taskId") Long taskId) {
         return ResponseEntity.ok().body(taskAnswerService.getTaskAnswerForStudent(taskId, studentId));
     }
 
-    @GetMapping("/for-teacher/{teacherId}/{taskId}")
-    public ResponseEntity<?> getTaskAnswersForTeacher(@PathVariable Long teacherId,
-                                                      @PathVariable Long taskId) {
-        return ResponseEntity.ok().body(
-                teacherFeignClient.getTeacherTask(taskId, teacherId).getBody()
-                        .getTaskAnswersId()
-                        .stream()
-                        .map(taskAnswerService::findTaskAnswerById)
-                        .collect(Collectors.toList())
-        );
+    @GetMapping("/for-teacher")
+    public ResponseEntity<?> getTaskAnswersForTeacher(@RequestParam("teacherId") Long teacherId,
+                                                      @RequestParam("taskId") Long taskId) {
+        return ResponseEntity.ok().body(taskAnswerService.getTaskAnswersForTeacher(teacherId, taskId));
     }
 
     @PostMapping("/send")
     private ResponseEntity<?> sendTaskAnswer(@RequestBody CreateTaskAnswerDTO dto) {
-        return ResponseEntity.ok().body(taskAnswerService.sendTaskAnswer(dto));
+        TaskAnswer taskAnswer = taskAnswerService.sendTaskAnswer(dto);
+        return ResponseEntity.ok().body(taskAnswer);
     }
 
-    @PostMapping("/upload/{taskAnswerId}")
-    public ResponseEntity<?> uploadFilesToTaskAnswer(@PathVariable Long taskAnswerId,
-                                                     @RequestParam MultipartFile[] files) {
+    @GetMapping("/download")
+    public ResponseEntity<?> downloadTaskFromTaskAnswer(@RequestParam("taskAnswerId") Long taskAnswerId,
+                                                        @RequestParam("filename") String filename) {
+        return ResponseEntity.ok().body(taskAnswerService.downloadFileFromAnswer(taskAnswerId, filename));
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadFilesToTaskAnswer(@RequestParam("taskAnswerId") Long taskAnswerId,
+                                                     @RequestParam("files") MultipartFile[] files) {
         return ResponseEntity.ok().body(taskAnswerService.uploadFilesToAnswer(taskAnswerId, files));
+    }
+
+    @PostMapping("/delete-file")
+    public ResponseEntity<?> deleteFileFromTaskAnswer(@RequestParam("taskAnswerId") Long taskAnswerId,
+                                                      @RequestParam("filename") String filename) {
+        return ResponseEntity.ok().body(taskAnswerService.deleteFileFromAnswer(taskAnswerId, filename));
     }
 
     @PutMapping("/update/{taskAnswerId}")
@@ -60,15 +71,11 @@ public class TaskAnswerController {
         return ResponseEntity.ok().body(taskAnswerService.findTaskAnswerById(taskAnswerId));
     }
 
-    @DeleteMapping("/delete-file/{taskAnswerId}")
-    public ResponseEntity<?> deleteFileFromTaskAnswer(@PathVariable Long taskAnswerId,
-                                                      @RequestParam("file-uri") String fileUri) {
-        return ResponseEntity.ok().body(taskAnswerService.deleteFileFromAnswer(taskAnswerId, fileUri));
-    }
-
-    @DeleteMapping("/delete/{taskAnswerId}/{studentId}")
-    public ResponseEntity<?> deleteTaskAnswer(@PathVariable Long taskAnswerId,
-                                              @PathVariable Long studentId) {
-        return ResponseEntity.ok().body(taskAnswerService.deleteTaskAnswer(taskAnswerId, studentId));
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteTaskAnswer(@RequestParam("taskAnswerId") Long taskAnswerId,
+                                              @RequestParam("studentId") Long studentId) {
+        TaskAnswer taskAnswer = taskAnswerService.deleteTaskAnswer(taskAnswerId, studentId);
+        teacherFeignClient.deleteTaskAnswerFromTask(taskAnswer.getTaskId(), taskAnswerId);
+        return ResponseEntity.ok().body(taskAnswer);
     }
 }

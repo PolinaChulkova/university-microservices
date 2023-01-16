@@ -6,12 +6,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "teacher", schema = "teacher", catalog = "university-teacher")
 @Getter@Setter
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Teacher {
@@ -56,5 +56,18 @@ public class Teacher {
         this.password = password;
         this.phoneNum = phoneNum;
         this.academicDegree = academicDegree;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(id, teacher.id) && Objects.equals(fullName, teacher.fullName) && Objects.equals(email, teacher.email) && Objects.equals(password, teacher.password) && Objects.equals(phoneNum, teacher.phoneNum) && Objects.equals(academicDegree, teacher.academicDegree) && Objects.equals(groupsId, teacher.groupsId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fullName, email, password, phoneNum, academicDegree, groupsId);
     }
 }

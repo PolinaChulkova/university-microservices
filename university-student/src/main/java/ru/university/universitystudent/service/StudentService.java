@@ -8,7 +8,10 @@ import ru.university.universitystudent.dto.StudentDTO;
 import ru.university.universitystudent.repo.StudentRepo;
 import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class StudentService {

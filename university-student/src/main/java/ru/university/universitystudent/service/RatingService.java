@@ -9,9 +9,11 @@ import ru.university.universitystudent.dto.UpdateRatingDTO;
 import ru.university.universitystudent.repo.RatingRepo;
 import ru.university.universityutils.exceptions.custom_exception.EntityNotFoundException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class RatingService {
